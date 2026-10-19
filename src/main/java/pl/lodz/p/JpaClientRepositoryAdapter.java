@@ -14,12 +14,13 @@ public class JpaClientRepositoryAdapter implements GuestRepositoryInterface{
     public void saveGuest(Guest guest) {
         GuestEnt guestEnt = new GuestEnt();
 
+        guestEnt.setId(0L);
         guestEnt.setPersonalId(guest.getPersonalId());
         guestEnt.setFirstName(guest.getFirstName());
         guestEnt.setLastName(guest.getLastName());
         guest.setArchived(guest.isArchived());
 
-
+        clientRepository.save(guestEnt);
     }
 
     @Override

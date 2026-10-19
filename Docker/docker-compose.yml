@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: nbd_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: nbddb
+      POSTGRES_USER: nbd
+      POSTGRES_PASSWORD: nbdpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg:/var/lib/postgresql/data
+      # Opcjonalnie: automatyczne wykonanie skryptów SQL przy pierwszym starcie bazy
+      # - ./init:/docker-entrypoint-initdb.d
+
+volumes:
+  pg:

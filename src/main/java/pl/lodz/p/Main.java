@@ -7,7 +7,7 @@ import pl.lodz.p.model.domain.Guest;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    static void main() {
+    public static void main(String[] args) {
         Guest guest = new Guest("Jan", "Paweł", "2137", false, null, null);
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("nbd-pu");
 
