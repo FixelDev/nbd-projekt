@@ -1,4 +1,4 @@
-package pl.lodz.p;
+package pl.lodz.p.model.domain;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;

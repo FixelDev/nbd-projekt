@@ -1,4 +1,4 @@
-package pl.lodz.p;
+package pl.lodz.p.model.domain;
 
 public class Room {
     private String number;

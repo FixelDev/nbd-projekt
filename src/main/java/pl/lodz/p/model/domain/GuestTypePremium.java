@@ -1,4 +1,4 @@
-package pl.lodz.p;
+package pl.lodz.p.model.domain;
 
 public class GuestTypePremium extends GuestType{
     public GuestTypePremium() {
