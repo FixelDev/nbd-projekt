@@ -1,17 +1,17 @@
 package pl.lodz.p.model.domain;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class Rent {
     private int id;
-    private LocalTime beginTime;
-    private LocalTime endTime;
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
     private Guest guest;
     private Room room;
     private double rentCost;
 
-    public Rent(int id, LocalTime beginTime, LocalTime endTime, Guest guest, Room room) {
+    public Rent(int id, LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room) {
         this.id = id;
         this.beginTime = beginTime;
         this.endTime = endTime;
@@ -36,11 +36,11 @@ public class Rent {
         return id;
     }
 
-    public LocalTime getBeginTime() {
+    public LocalDateTime getBeginTime() {
         return beginTime;
     }
 
-    public LocalTime getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
