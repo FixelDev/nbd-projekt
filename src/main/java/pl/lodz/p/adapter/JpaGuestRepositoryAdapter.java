@@ -1,12 +1,9 @@
 package pl.lodz.p.adapter;
 
 import pl.lodz.p.model.db.*;
-import pl.lodz.p.model.domain.GuestType;
-import pl.lodz.p.model.domain.GuestTypeDefault;
-import pl.lodz.p.model.domain.GuestTypeExtra;
+import pl.lodz.p.model.domain.*;
 import pl.lodz.p.repository.GuestRepositoryInterface;
 import pl.lodz.p.repository.JpaGuestRepository;
-import pl.lodz.p.model.domain.Guest;
 
 public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
     private JpaGuestRepository clientRepository;
@@ -23,7 +20,10 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
         guestEnt.setFirstName(guest.getFirstName());
         guestEnt.setLastName(guest.getLastName());
         guestEnt.setArchived(guest.isArchived());
-        guestEnt.setAddress(guest.getAddress());
+        guestEnt.setUuid(guest.getUuid());
+
+        AddressEnt addressEnt = mapAddressFromDomainToDb(guest.getAddress());
+        guestEnt.setAddress(addressEnt);
 
         GuestTypeEnt guestTypeDb = mapGuestTypeFromDomainToDb(guest.getGuestType());
         guestEnt.setGuestType(guestTypeDb);
@@ -42,7 +42,22 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
             guestTypeDb = new GuestTypePremiumEnt();
         }
 
+        guestTypeDb.setMealServiceType(guestTypeDomain.getMealServiceType());
+        guestTypeDb.setSaunaAvailable(guestTypeDomain.isSaunaAvailable());
+        guestTypeDb.setUnlimitedWifi(guestTypeDomain.isUnlimitedWifi());
+
         return guestTypeDb;
+    }
+
+    private AddressEnt mapAddressFromDomainToDb(Address address) {
+        AddressEnt addressEnt = new AddressEnt();
+
+        addressEnt.setCity(address.getCity());
+        addressEnt.setStreet(address.getStreet());
+        addressEnt.setNumber(address.getNumber());
+        addressEnt.setPostalCode(address.getPostalCode());
+
+        return addressEnt;
     }
 
 }

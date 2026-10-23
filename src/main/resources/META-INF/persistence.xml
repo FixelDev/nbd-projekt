@@ -3,6 +3,12 @@
     <persistence-unit name="nbd-pu" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>pl.lodz.p.model.db.GuestEnt</class>
+        <class>pl.lodz.p.model.db.GuestTypeEnt</class>
+        <class>pl.lodz.p.model.db.GuestTypeDefaultEnt</class>
+        <class>pl.lodz.p.model.db.GuestTypeExtraEnt</class>
+        <class>pl.lodz.p.model.db.GuestTypePremiumEnt</class>
+        <class>pl.lodz.p.model.db.RoomEnt</class>
+
 
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/nbddb"/>
@@ -10,7 +16,7 @@
             <property name="jakarta.persistence.jdbc.password" value="nbdpassword"/>
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
 
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
         </properties>

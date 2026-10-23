@@ -1,15 +1,20 @@
 package pl.lodz.p.model.domain;
 
+import java.util.UUID;
+
 public class Room {
     private final String number;
     private int bedsAmount;
     private double price;
     private boolean archived;
+    private boolean rented;
+    private UUID uuid;
 
     public Room(String number, int bedsAmount, double price) {
         this.number = number;
         this.bedsAmount = bedsAmount;
         this.price = price;
+        this.uuid = UUID.randomUUID();
     }
 
     public void setBasePrice(double price) {
@@ -38,12 +43,25 @@ public class Room {
         return archived;
     }
 
+    public boolean isRented() {
+        return rented;
+    }
+
+    public void setRented(boolean rented) {
+        this.rented = rented;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
     @Override
     public String toString() {
         return "Room: " +
-                "number: '" + number + '\'' +
-                ", bedsAmount: " + bedsAmount +
-                ", price: " + price +
-                ", archived: " + archived;
+                "UUID: '" + uuid + '\'' + '\n' +
+                "number: '" + number + '\'' + '\n' +
+                "bedsAmount: " + bedsAmount + '\n' +
+                "price: " + price + '\n' +
+                "archived: " + archived + '\n';
     }
 }

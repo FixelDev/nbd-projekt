@@ -3,11 +3,14 @@ package pl.lodz.p.model.db;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import pl.lodz.p.model.domain.Address;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "Guest")
 @Table(name = "GUESTS")
-public class GuestEnt {
+public class GuestEnt extends AbstractEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -29,12 +32,16 @@ public class GuestEnt {
 
     @Embedded
     @NotNull
-    private Address address;
+    private AddressEnt address;
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @NotNull
     @JoinColumn(name = "GUEST_TYPE_ID")
     private GuestTypeEnt guestType;
+
+    @OneToMany(mappedBy = "guest")
+    private List<RentEnt> currentRents = new ArrayList<>();
+
 
     public Long getId() {
         return id;
@@ -72,13 +79,21 @@ public class GuestEnt {
         this.archived = archived;
     }
 
+
+
     public void setGuestType(GuestTypeEnt guestType) {
         this.guestType = guestType;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(AddressEnt address) {
         this.address = address;
     }
 
+    public AddressEnt getAddress() {
+        return address;
+    }
 
+    public GuestTypeEnt getGuestType() {
+        return guestType;
+    }
 }

@@ -9,6 +9,7 @@ public class Rent {
     private final Guest guest;
     private final Room room;
     private double rentCost;
+    private boolean active = true;
 
     public Rent(LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room) {
         this.beginTime = beginTime;
@@ -50,13 +51,22 @@ public class Rent {
         return rentCost;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public String toString() {
         return "Rent: " +
-                "beginTime: " + beginTime +
-                ", endTime: " + endTime +
-                ", guest: " + guest +
-                ", room: " + room +
-                ", rentCost: " + rentCost;
+                "beginTime: " + beginTime + '\n' +
+                "endTime: " + endTime + '\n' +
+                "guest: " + guest + '\n' +
+                "room: " + room + '\n' +
+                "rentCost: " + rentCost + '\n' +
+                "isActive: " + active + '\n';
     }
 }

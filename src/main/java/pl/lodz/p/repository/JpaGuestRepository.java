@@ -17,6 +17,7 @@ public class JpaGuestRepository {
         EntityTransaction transaction = em.getTransaction();
 
         transaction.begin();
+        em.persist(guestEnt.getGuestType());
         em.persist(guestEnt);
         transaction.commit();
     }

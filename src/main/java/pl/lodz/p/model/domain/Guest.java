@@ -1,12 +1,18 @@
 package pl.lodz.p.model.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class Guest {
+    private UUID uuid;
     private String firstName;
     private String lastName;
     private final String personalId;
     private boolean archived;
     private Address address;
     private GuestType guestType;
+    private List<Rent> currentRents = new ArrayList<>();
 
     public Guest(String firstName, String lastName, String personalId, Address address, GuestType guestType) {
         this.firstName = firstName;
@@ -14,6 +20,7 @@ public class Guest {
         this.personalId = personalId;
         this.address = address;
         this.guestType = guestType;
+        this.uuid = UUID.randomUUID();
     }
 
     public void setAddress(Address address) {
@@ -64,14 +71,19 @@ public class Guest {
         return guestType.applyAdditionalCosts(price);
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
     @Override
     public String toString() {
         return "Guest: " +
-                "firstName: '" + firstName + '\'' +
-                ", lastName: '" + lastName + '\'' +
-                ", personalId: '" + personalId + '\'' +
-                ", archived: " + archived +
-                ", address: " + address +
-                ", guestType: " + guestType;
+                "UUID: '" + uuid + '\'' + '\n' +
+                "firstName: '" + firstName + '\'' + '\n' +
+                "lastName: '" + lastName + '\'' + '\n' +
+                "personalId: '" + personalId + '\'' + '\n' +
+                "archived: " + archived + '\n' +
+                "address: " + address + '\n' +
+                "guestType: " + guestType + '\n';
     }
 }

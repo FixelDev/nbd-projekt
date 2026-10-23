@@ -23,5 +23,7 @@ public class Main {
         JpaGuestRepositoryAdapter adapter = new JpaGuestRepositoryAdapter(rep);
 
         adapter.saveGuest(guest);
+
+        IO.println(guest);
     }
 }
