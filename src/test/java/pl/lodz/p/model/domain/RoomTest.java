@@ -10,6 +10,7 @@ class RoomTest {
     private final double initialBasePrice = 500.0;
 
     private final double newBasePrice = 700.0;
+    private final int newBedsAmount = 4;
 
 
     @Test
@@ -31,5 +32,8 @@ class RoomTest {
 
         room.setBasePrice(newBasePrice);
         assertEquals(newBasePrice, room.getBasePrice());
+
+        room.setBedsAmount(newBedsAmount);
+        assertEquals(newBedsAmount, room.getBedsAmount());
     }
 }

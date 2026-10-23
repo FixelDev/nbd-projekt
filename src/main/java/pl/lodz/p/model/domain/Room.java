@@ -1,7 +1,7 @@
 package pl.lodz.p.model.domain;
 
 public class Room {
-    private String number;
+    private final String number;
     private int bedsAmount;
     private double price;
     private boolean archived;
@@ -28,11 +28,22 @@ public class Room {
         return bedsAmount;
     }
 
+    public void setBedsAmount(int bedsAmount) { this.bedsAmount = bedsAmount; }
+
     public double getBasePrice() {
         return price;
     }
 
     public boolean isArchived() {
         return archived;
+    }
+
+    @Override
+    public String toString() {
+        return "Room: " +
+                "number: '" + number + '\'' +
+                ", bedsAmount: " + bedsAmount +
+                ", price: " + price +
+                ", archived: " + archived;
     }
 }

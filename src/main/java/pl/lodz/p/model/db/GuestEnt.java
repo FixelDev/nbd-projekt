@@ -1,30 +1,40 @@
 package pl.lodz.p.model.db;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import pl.lodz.p.model.domain.Address;
 
 @Entity(name = "Guest")
 @Table(name = "GUESTS")
 public class GuestEnt {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotEmpty
     @Column(name = "FIRST_NAME")
     private String firstName;
+
+    @NotEmpty
     @Column(name = "LAST_NAME")
     private String lastName;
 
-    @Column(name = "PERSONAL_ID")
+    @Column(name = "PERSONAL_ID", unique = true)
     private String personalId;
+
+    @NotEmpty
     @Column(name = "ARCHIVED")
     private boolean archived;
-//    private Address address;
-//    private GuestType guestType;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Embedded
+    @NotNull
+    private Address address;
+
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @NotNull
+    @JoinColumn(name = "GUEST_TYPE_ID")
+    private GuestTypeEnt guestType;
 
     public Long getId() {
         return id;
@@ -61,4 +71,14 @@ public class GuestEnt {
     public void setArchived(boolean archived) {
         this.archived = archived;
     }
+
+    public void setGuestType(GuestTypeEnt guestType) {
+        this.guestType = guestType;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+
 }

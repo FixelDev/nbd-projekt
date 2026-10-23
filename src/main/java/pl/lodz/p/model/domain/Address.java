@@ -1,10 +1,10 @@
 package pl.lodz.p.model.domain;
 
 public class Address {
-    private String city;
-    private String street;
-    private String number;
-    private String postalCode;
+    private final String city;
+    private final String street;
+    private final String number;
+    private final String postalCode;
 
     public Address(String city, String street, String number, String postalCode) {
         this.city = city;
@@ -27,5 +27,14 @@ public class Address {
 
     public String getPostalCode() {
         return postalCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Address: " +
+                "city: '" + city + '\'' +
+                ", street: '" + street + '\'' +
+                ", number: '" + number + '\'' +
+                ", postalCode: '" + postalCode + '\'';
     }
 }

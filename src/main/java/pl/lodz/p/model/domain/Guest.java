@@ -3,16 +3,15 @@ package pl.lodz.p.model.domain;
 public class Guest {
     private String firstName;
     private String lastName;
-    private String personalId;
+    private final String personalId;
     private boolean archived;
     private Address address;
     private GuestType guestType;
 
-    public Guest(String firstName, String lastName, String personalId, boolean archived, Address address, GuestType guestType) {
+    public Guest(String firstName, String lastName, String personalId, Address address, GuestType guestType) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.personalId = personalId;
-        this.archived = archived;
         this.address = address;
         this.guestType = guestType;
     }
@@ -65,4 +64,14 @@ public class Guest {
         return guestType.applyAdditionalCosts(price);
     }
 
+    @Override
+    public String toString() {
+        return "Guest: " +
+                "firstName: '" + firstName + '\'' +
+                ", lastName: '" + lastName + '\'' +
+                ", personalId: '" + personalId + '\'' +
+                ", archived: " + archived +
+                ", address: " + address +
+                ", guestType: " + guestType;
+    }
 }

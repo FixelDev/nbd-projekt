@@ -30,4 +30,12 @@ public abstract class GuestType {
     }
 
     public abstract double applyAdditionalCosts(double price);
+
+    @Override
+    public String toString() {
+        return "GuestType: " +
+                "unlimitedWifi: " + unlimitedWifi +
+                ", saunaAvailable: " + saunaAvailable +
+                ", mealServiceType: '" + mealServiceType + '\'' ;
+    }
 }

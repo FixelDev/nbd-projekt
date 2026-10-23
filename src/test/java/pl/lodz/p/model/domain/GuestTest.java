@@ -27,7 +27,7 @@ class GuestTest {
 
     @Test
     void constructorTests() {
-        Guest guest = new Guest(initialFirstName, initialLastName, initialPersonalID, false, initialAddress, initialGuestType);
+        Guest guest = new Guest(initialFirstName, initialLastName, initialPersonalID, initialAddress, initialGuestType);
 
         assertEquals(initialFirstName, guest.getFirstName());
         assertEquals(initialLastName, guest.getLastName());
@@ -39,7 +39,7 @@ class GuestTest {
 
     @Test
     void settersTests() {
-        Guest guest = new Guest(initialFirstName, initialLastName, initialPersonalID, false, initialAddress, initialGuestType);
+        Guest guest = new Guest(initialFirstName, initialLastName, initialPersonalID, initialAddress, initialGuestType);
 
         guest.setFirstName(newFirstName);
         assertEquals(newFirstName, guest.getFirstName());

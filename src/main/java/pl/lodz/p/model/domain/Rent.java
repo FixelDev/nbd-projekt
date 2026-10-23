@@ -4,15 +4,13 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class Rent {
-    private int id;
-    private LocalDateTime beginTime;
-    private LocalDateTime endTime;
-    private Guest guest;
-    private Room room;
+    private final LocalDateTime beginTime;
+    private final LocalDateTime endTime;
+    private final Guest guest;
+    private final Room room;
     private double rentCost;
 
-    public Rent(int id, LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room) {
-        this.id = id;
+    public Rent(LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room) {
         this.beginTime = beginTime;
         this.endTime = endTime;
         this.guest = guest;
@@ -30,10 +28,6 @@ public class Rent {
         } else {
             rentCost = 0.0;
         }
-    }
-
-    public int getId() {
-        return id;
     }
 
     public LocalDateTime getBeginTime() {
@@ -54,5 +48,15 @@ public class Rent {
 
     public double getRentCost() {
         return rentCost;
+    }
+
+    @Override
+    public String toString() {
+        return "Rent: " +
+                "beginTime: " + beginTime +
+                ", endTime: " + endTime +
+                ", guest: " + guest +
+                ", room: " + room +
+                ", rentCost: " + rentCost;
     }
 }

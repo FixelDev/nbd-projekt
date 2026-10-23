@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RentTest {
-    private final int initialId = 0;
     private Guest initialGuest;
     private Address address;
     private GuestType defaultGuestType;
@@ -21,7 +20,7 @@ class RentTest {
         address = new Address("Warszawa", "Ładna", "6a", "12-000");
         defaultGuestType = new GuestTypeDefault();
 
-        initialGuest = new Guest("Jan", "Nowak", "213", false, address, defaultGuestType);
+        initialGuest = new Guest("Jan", "Nowak", "213", address, defaultGuestType);
         initialRoom = new Room("12", 2, 100.0);
 
         initialBeginTime = LocalDateTime.of(2015, 5, 13, 9, 25);
@@ -30,9 +29,8 @@ class RentTest {
 
     @Test
     void constructorTests() {
-        Rent rent = new Rent(initialId, initialBeginTime, initialEndTime, initialGuest, initialRoom);
+        Rent rent = new Rent(initialBeginTime, initialEndTime, initialGuest, initialRoom);
 
-        assertEquals(initialId, rent.getId());
         assertEquals(initialGuest, rent.getGuest());
         assertEquals(initialRoom, rent.getRoom());
         assertEquals(initialBeginTime, rent.getBeginTime());
@@ -41,10 +39,10 @@ class RentTest {
 
     @Test
     void getRentCostTests() {
-        Rent rentZeroDays = new Rent(initialId, initialBeginTime, initialBeginTime, initialGuest, initialRoom);
+        Rent rentZeroDays = new Rent(initialBeginTime, initialBeginTime, initialGuest, initialRoom);
         assertEquals(0.0, rentZeroDays.getRentCost());
 
-        Rent rentMultipleDays = new Rent(initialId, initialBeginTime, initialEndTime, initialGuest, initialRoom);
+        Rent rentMultipleDays = new Rent(initialBeginTime, initialEndTime, initialGuest, initialRoom);
 
         assertEquals(100.0, rentMultipleDays.getRentCost());
     }
