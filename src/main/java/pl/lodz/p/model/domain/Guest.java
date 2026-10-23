@@ -83,7 +83,7 @@ public class Guest {
                 "lastName: '" + lastName + '\'' + '\n' +
                 "personalId: '" + personalId + '\'' + '\n' +
                 "archived: " + archived + '\n' +
-                "address: " + address + '\n' +
-                "guestType: " + guestType + '\n';
+                address + '\n' +
+                guestType + '\n';
     }
 }

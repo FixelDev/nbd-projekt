@@ -33,8 +33,7 @@ public abstract class GuestType {
 
     @Override
     public String toString() {
-        return "GuestType: " +
-                "unlimitedWifi: " + unlimitedWifi + '\n' +
+        return  "unlimitedWifi: " + unlimitedWifi + '\n' +
                 "saunaAvailable: " + saunaAvailable + '\n' +
                 "mealServiceType: '" + mealServiceType + '\'' + '\n';
     }

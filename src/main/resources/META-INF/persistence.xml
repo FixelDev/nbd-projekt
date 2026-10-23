@@ -8,6 +8,7 @@
         <class>pl.lodz.p.model.db.GuestTypeExtraEnt</class>
         <class>pl.lodz.p.model.db.GuestTypePremiumEnt</class>
         <class>pl.lodz.p.model.db.RoomEnt</class>
+        <class>pl.lodz.p.model.db.RentEnt</class>
 
 
         <properties>

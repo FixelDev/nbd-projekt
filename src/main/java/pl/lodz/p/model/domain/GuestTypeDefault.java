@@ -11,4 +11,10 @@ public class GuestTypeDefault extends GuestType{
     public double applyAdditionalCosts(double price) {
         return 0.0;
     }
+
+    @Override
+    public String toString() {
+        return "GuestType: DEFAULT" + '\n' +
+                super.toString();
+    }
 }
