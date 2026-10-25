@@ -1,14 +1,12 @@
 package pl.lodz.p.adapter;
 
-import pl.lodz.p.exception.RepositoryException;
 import pl.lodz.p.model.db.*;
 import pl.lodz.p.model.domain.*;
-import pl.lodz.p.repository.GuestRepositoryInterface;
 import pl.lodz.p.repository.JpaGuestRepository;
 
 import java.util.List;
 
-public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
+public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInterface {
     private JpaGuestRepository clientRepository;
 
     public JpaGuestRepositoryAdapter(JpaGuestRepository clientRepository) {
@@ -16,7 +14,7 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
     }
 
     @Override
-    public void registerGuest(Guest guest) {
+    public Guest saveGuest(Guest guest) {
         GuestEnt guestEnt = mapGuestFromDomainToDb(guest);
 
         AddressEnt addressEnt = mapAddressFromDomainToDb(guest.getAddress());
@@ -25,11 +23,13 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
         GuestTypeEnt guestTypeDb = mapGuestTypeFromDomainToDb(guest.getGuestType());
         guestEnt.setGuestType(guestTypeDb);
 
-        clientRepository.saveGuest(guestEnt);
+        GuestEnt savedGuest = clientRepository.saveGuest(guestEnt);
+        return mapGuestFromDbToDomain(savedGuest
+        );
     }
 
     @Override
-    public void unregisterGuest(Guest guest) {
+    public void archiveGuset(Guest guest) {
 
     }
 
@@ -47,6 +47,22 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
     public List<Rent> getGuestRents(String personalId) {
         return List.of();
     }
+
+    private Guest mapGuestFromDbToDomain(GuestEnt guestEnt) {
+        Address address = mapAddressFromDbToDomain(guestEnt.getAddress());
+        GuestType guestType = mapGuestTypeFromDbToDomain(guestEnt.getGuestType());
+
+
+        Guest guest = new Guest(guestEnt.getUuid(),
+                                guestEnt.getFirstName(),
+                                guestEnt.getLastName(),
+                                guestEnt.getPersonalId(),
+                                address,
+                                guestType);
+
+        return guest;
+    }
+
 
     private GuestEnt mapGuestFromDomainToDb(Guest guest) {
         GuestEnt guestEnt = new GuestEnt();
@@ -78,6 +94,20 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
         return guestTypeDb;
     }
 
+    private GuestType mapGuestTypeFromDbToDomain(GuestTypeEnt guestTypeEnt) {
+        GuestType guestType;
+
+        if (guestTypeEnt instanceof GuestTypeDefaultEnt) {
+            guestType = new GuestTypeDefault();
+        } else if (guestTypeEnt instanceof GuestTypeExtraEnt) {
+            guestType = new GuestTypeExtra();
+        } else {
+            guestType = new GuestTypePremium();
+        }
+
+        return guestType;
+    }
+
     private AddressEnt mapAddressFromDomainToDb(Address address) {
         AddressEnt addressEnt = new AddressEnt();
 
@@ -86,6 +116,12 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
         addressEnt.setNumber(address.getNumber());
 
         return addressEnt;
+    }
+
+    private Address mapAddressFromDbToDomain(AddressEnt addressEnt) {
+        Address address = new Address(addressEnt.getCity(), addressEnt.getStreet(), addressEnt.getNumber());
+
+        return address;
     }
 
 }

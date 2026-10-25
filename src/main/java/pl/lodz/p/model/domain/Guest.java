@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Guest {
-    private UUID uuid;
+    private final UUID uuid;
     private String firstName;
     private String lastName;
     private final String personalId;
@@ -21,6 +21,15 @@ public class Guest {
         this.address = address;
         this.guestType = guestType;
         this.uuid = UUID.randomUUID();
+    }
+
+    public Guest(UUID uuid, String firstName, String lastName, String personalId, Address address, GuestType guestType) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.personalId = personalId;
+        this.address = address;
+        this.guestType = guestType;
+        this.uuid = uuid;
     }
 
     public void setAddress(Address address) {

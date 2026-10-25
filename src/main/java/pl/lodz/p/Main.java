@@ -24,7 +24,7 @@ public class Main {
         JpaGuestRepositoryAdapter adapter = new JpaGuestRepositoryAdapter(rep);
 
         try {
-            adapter.registerGuest(guest);
+            adapter.saveGuest(guest);
         } catch (RepositoryException e) {
             System.err.println(e.getMessage());
         }

@@ -13,7 +13,7 @@ public class JpaGuestRepository {
         this.emf = emf;
     }
 
-    public void saveGuest(GuestEnt guestEnt) {
+    public GuestEnt saveGuest(GuestEnt guestEnt) {
 
         try (EntityManager em = emf.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
@@ -23,12 +23,32 @@ public class JpaGuestRepository {
                 em.persist(guestEnt.getGuestType());
                 em.persist(guestEnt);
                 transaction.commit();
+                return guestEnt;
             } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
                 }
 
                 throw new RepositoryException("Wystąpił błąd przy zapisie gościa, o uuid: " + guestEnt.getUuid() + ", do bazy danych", e);
+            }
+
+        }
+    }
+
+    public void archiveGuest(GuestEnt guestEnt) {
+        try (EntityManager em = emf.createEntityManager()) {
+            EntityTransaction transaction = em.getTransaction();
+
+            try {
+                transaction.begin();
+                em.merge(guestEnt);
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw new RepositoryException("Wystąpił błąd przy archiwizowaniu gościa, o uuid: " + guestEnt.getUuid() + ", do bazy danych", e);
             }
 
         }
