@@ -22,9 +22,6 @@ public class AddressEnt {
     @Column(name = "NUMBER")
     private String number;
 
-    @NotEmpty
-    @Column(name = "POSTAL_CODE")
-    private String postalCode;
 
     public String getCity() {
         return city;
@@ -48,13 +45,5 @@ public class AddressEnt {
 
     public void setNumber(String number) {
         this.number = number;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
     }
 }

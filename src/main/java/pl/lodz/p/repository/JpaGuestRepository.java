@@ -3,6 +3,7 @@ package pl.lodz.p.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import pl.lodz.p.exception.RepositoryException;
 import pl.lodz.p.model.db.GuestEnt;
 
 public class JpaGuestRepository {
@@ -12,13 +13,24 @@ public class JpaGuestRepository {
         this.emf = emf;
     }
 
-    public void save(GuestEnt guestEnt) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
+    public void saveGuest(GuestEnt guestEnt) {
 
-        transaction.begin();
-        em.persist(guestEnt.getGuestType());
-        em.persist(guestEnt);
-        transaction.commit();
+        try (EntityManager em = emf.createEntityManager()) {
+            EntityTransaction transaction = em.getTransaction();
+
+            try {
+                transaction.begin();
+                em.persist(guestEnt.getGuestType());
+                em.persist(guestEnt);
+                transaction.commit();
+            } catch (Exception e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw new RepositoryException("Wystąpił błąd przy zapisie gościa, o uuid: " + guestEnt.getUuid() + ", do bazy danych", e);
+            }
+
+        }
     }
 }

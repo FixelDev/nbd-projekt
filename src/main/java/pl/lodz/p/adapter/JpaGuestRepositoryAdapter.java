@@ -1,9 +1,12 @@
 package pl.lodz.p.adapter;
 
+import pl.lodz.p.exception.RepositoryException;
 import pl.lodz.p.model.db.*;
 import pl.lodz.p.model.domain.*;
 import pl.lodz.p.repository.GuestRepositoryInterface;
 import pl.lodz.p.repository.JpaGuestRepository;
+
+import java.util.List;
 
 public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
     private JpaGuestRepository clientRepository;
@@ -13,7 +16,39 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
     }
 
     @Override
-    public void saveGuest(Guest guest) {
+    public void registerGuest(Guest guest) {
+        GuestEnt guestEnt = mapGuestFromDomainToDb(guest);
+
+        AddressEnt addressEnt = mapAddressFromDomainToDb(guest.getAddress());
+        guestEnt.setAddress(addressEnt);
+
+        GuestTypeEnt guestTypeDb = mapGuestTypeFromDomainToDb(guest.getGuestType());
+        guestEnt.setGuestType(guestTypeDb);
+
+        clientRepository.saveGuest(guestEnt);
+    }
+
+    @Override
+    public void unregisterGuest(Guest guest) {
+
+    }
+
+    @Override
+    public Guest findGuestByPersonalId(String personalId) {
+        return null;
+    }
+
+    @Override
+    public List<Guest> findAllGuests(boolean includeArchived) {
+        return List.of();
+    }
+
+    @Override
+    public List<Rent> getGuestRents(String personalId) {
+        return List.of();
+    }
+
+    private GuestEnt mapGuestFromDomainToDb(Guest guest) {
         GuestEnt guestEnt = new GuestEnt();
 
         guestEnt.setPersonalId(guest.getPersonalId());
@@ -22,13 +57,7 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
         guestEnt.setArchived(guest.isArchived());
         guestEnt.setUuid(guest.getUuid());
 
-        AddressEnt addressEnt = mapAddressFromDomainToDb(guest.getAddress());
-        guestEnt.setAddress(addressEnt);
-
-        GuestTypeEnt guestTypeDb = mapGuestTypeFromDomainToDb(guest.getGuestType());
-        guestEnt.setGuestType(guestTypeDb);
-
-        clientRepository.save(guestEnt);
+        return guestEnt;
     }
 
     private GuestTypeEnt mapGuestTypeFromDomainToDb(GuestType guestTypeDomain) {
@@ -55,7 +84,6 @@ public class JpaGuestRepositoryAdapter implements GuestRepositoryInterface {
         addressEnt.setCity(address.getCity());
         addressEnt.setStreet(address.getStreet());
         addressEnt.setNumber(address.getNumber());
-        addressEnt.setPostalCode(address.getPostalCode());
 
         return addressEnt;
     }

@@ -4,13 +4,11 @@ public class Address {
     private final String city;
     private final String street;
     private final String number;
-    private final String postalCode;
 
-    public Address(String city, String street, String number, String postalCode) {
+    public Address(String city, String street, String number) {
         this.city = city;
         this.street = street;
         this.number = number;
-        this.postalCode = postalCode;
     }
 
     public String getCity() {
@@ -25,16 +23,11 @@ public class Address {
         return number;
     }
 
-    public String getPostalCode() {
-        return postalCode;
-    }
-
     @Override
     public String toString() {
         return "Address: " +
                 "city: '" + city + '\'' + '\n' +
                 "street: '" + street + '\'' + '\n' +
-                "number: '" + number + '\'' + '\n' +
-                "postalCode: '" + postalCode + '\'' + '\n';
+                "number: '" + number + '\'' + '\n';
     }
 }

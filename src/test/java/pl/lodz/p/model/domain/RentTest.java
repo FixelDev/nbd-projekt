@@ -17,7 +17,7 @@ class RentTest {
 
     @BeforeEach
     void setUp() {
-        address = new Address("Warszawa", "Ładna", "6a", "12-000");
+        address = new Address("Warszawa", "Ładna", "6a");
         defaultGuestType = new GuestTypeDefault();
 
         initialGuest = new Guest("Jan", "Nowak", "213", address, defaultGuestType);

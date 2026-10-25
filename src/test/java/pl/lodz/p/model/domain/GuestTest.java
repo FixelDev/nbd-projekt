@@ -19,8 +19,8 @@ class GuestTest {
 
     @BeforeEach
     void setUp() {
-        initialAddress = new Address("Radomsko", "Ładna", "45", "97-500");
-        newAddress = new Address("Warszawa", "Leśna", "12", "12-023");
+        initialAddress = new Address("Radomsko", "Ładna", "45");
+        newAddress = new Address("Warszawa", "Leśna", "12");
         initialGuestType = new GuestTypeDefault();
         newGuestType = new GuestTypePremium();
     }
