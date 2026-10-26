@@ -4,13 +4,14 @@ import pl.lodz.p.model.db.*;
 import pl.lodz.p.model.domain.*;
 import pl.lodz.p.repository.JpaGuestRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInterface {
-    private JpaGuestRepository clientRepository;
+    private JpaGuestRepository guestRepository;
 
-    public JpaGuestRepositoryAdapter(JpaGuestRepository clientRepository) {
-        this.clientRepository = clientRepository;
+    public JpaGuestRepositoryAdapter(JpaGuestRepository guestRepository) {
+        this.guestRepository = guestRepository;
     }
 
     @Override
@@ -23,24 +24,30 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
         GuestTypeEnt guestTypeDb = mapGuestTypeFromDomainToDb(guest.getGuestType());
         guestEnt.setGuestType(guestTypeDb);
 
-        GuestEnt savedGuest = clientRepository.saveGuest(guestEnt);
-        return mapGuestFromDbToDomain(savedGuest
-        );
+        GuestEnt savedGuest = guestRepository.saveGuest(guestEnt);
+        return mapGuestFromDbToDomain(savedGuest);
     }
 
     @Override
-    public void archiveGuset(Guest guest) {
-
+    public void setGuestArchivedStatus(String personalId, boolean isArchived) {
+        guestRepository.setGuestArchivedStatus(personalId, isArchived);
     }
 
     @Override
     public Guest findGuestByPersonalId(String personalId) {
-        return null;
+        GuestEnt guestEnt = guestRepository.findGuestByPersonalId(personalId);
+        return mapGuestFromDbToDomain(guestEnt);
     }
 
     @Override
-    public List<Guest> findAllGuests(boolean includeArchived) {
-        return List.of();
+    public List<Guest> findAllGuests() {
+        List<Guest> allGuests = new ArrayList<>();
+
+        for (GuestEnt guestEnt : guestRepository.findAllGuests()) {
+            allGuests.add(mapGuestFromDbToDomain(guestEnt));
+        }
+
+        return allGuests;
     }
 
     @Override
@@ -60,8 +67,12 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
                                 address,
                                 guestType);
 
+        guest.setArchived(guestEnt.isArchived());
+
         return guest;
     }
+
+
 
 
     private GuestEnt mapGuestFromDomainToDb(Guest guest) {
@@ -72,6 +83,8 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
         guestEnt.setLastName(guest.getLastName());
         guestEnt.setArchived(guest.isArchived());
         guestEnt.setUuid(guest.getUuid());
+
+
 
         return guestEnt;
     }

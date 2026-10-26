@@ -23,10 +23,10 @@ public class GuestEnt extends AbstractEntity {
     @Column(name = "LAST_NAME")
     private String lastName;
 
+    @NotNull
     @Column(name = "PERSONAL_ID", unique = true)
     private String personalId;
 
-    @NotEmpty
     @Column(name = "ARCHIVED")
     private boolean archived;
 
@@ -96,4 +96,5 @@ public class GuestEnt extends AbstractEntity {
     public GuestTypeEnt getGuestType() {
         return guestType;
     }
+
 }

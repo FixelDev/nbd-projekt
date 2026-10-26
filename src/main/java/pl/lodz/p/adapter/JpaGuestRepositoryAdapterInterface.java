@@ -7,8 +7,8 @@ import java.util.List;
 
 public interface JpaGuestRepositoryAdapterInterface {
     Guest saveGuest(Guest guest);
-    void archiveGuset(Guest guest);
+    void setGuestArchivedStatus(String personalId, boolean isArchived);
     Guest findGuestByPersonalId(String personalId);
-    List<Guest> findAllGuests(boolean includeArchived);
+    List<Guest> findAllGuests();
     List<Rent> getGuestRents(String personalId);
 }
