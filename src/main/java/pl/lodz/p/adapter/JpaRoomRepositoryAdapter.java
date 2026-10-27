@@ -1,5 +1,6 @@
 package pl.lodz.p.adapter;
 
+import pl.lodz.p.adapter.mapper.RoomMapper;
 import pl.lodz.p.model.db.AddressEnt;
 import pl.lodz.p.model.db.GuestEnt;
 import pl.lodz.p.model.db.GuestTypeEnt;
@@ -22,10 +23,10 @@ public class JpaRoomRepositoryAdapter implements JpaRoomRepositoryAdapterInterfa
 
     @Override
     public Room saveRoom(Room room) {
-        RoomEnt roomEnt = mapRoomFromDomainToDb(room);
+        RoomEnt roomEnt = RoomMapper.mapRoomFromDomainToDb(room);
 
         RoomEnt savedRoom = roomRepository.saveRoom(roomEnt);
-        return mapRoomFromDbToDomain(savedRoom);
+        return RoomMapper.mapRoomFromDbToDomain(savedRoom);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class JpaRoomRepositoryAdapter implements JpaRoomRepositoryAdapterInterfa
     public Room findRoomByNumber(String number) {
         RoomEnt roomEnt = roomRepository.findRoomByNumber(number);
 
-        return mapRoomFromDbToDomain(roomEnt);
+        return RoomMapper.mapRoomFromDbToDomain(roomEnt);
     }
 
     @Override
@@ -45,34 +46,10 @@ public class JpaRoomRepositoryAdapter implements JpaRoomRepositoryAdapterInterfa
         List<Room> allRooms = new ArrayList<>();
 
         for (RoomEnt roomEnt : roomRepository.findAllRooms()) {
-            allRooms.add(mapRoomFromDbToDomain(roomEnt));
+            allRooms.add(RoomMapper.mapRoomFromDbToDomain(roomEnt));
         }
 
         return allRooms;
     }
 
-    private Room mapRoomFromDbToDomain(RoomEnt roomEnt) {
-        Room room = new Room(roomEnt.getUuid(),
-                roomEnt.getNumber(),
-                roomEnt.getBedsAmount(),
-                roomEnt.getPrice());
-
-        room.setRented(roomEnt.isRented());
-        room.setArchived(roomEnt.isArchived());
-
-        return room;
-    }
-
-    private RoomEnt mapRoomFromDomainToDb(Room room) {
-        RoomEnt roomEnt = new RoomEnt();
-
-        roomEnt.setUuid(room.getUuid());
-        roomEnt.setNumber(room.getNumber());
-        roomEnt.setBedsAmount(room.getBedsAmount());
-        roomEnt.setPrice(room.getBasePrice());
-        roomEnt.setArchived(room.isArchived());
-        roomEnt.setRented(room.isRented());
-
-        return roomEnt;
-    }
 }

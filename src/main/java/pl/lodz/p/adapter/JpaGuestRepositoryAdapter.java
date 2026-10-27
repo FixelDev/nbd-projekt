@@ -1,5 +1,6 @@
 package pl.lodz.p.adapter;
 
+import pl.lodz.p.adapter.mapper.GuestMapper;
 import pl.lodz.p.model.db.*;
 import pl.lodz.p.model.domain.*;
 import pl.lodz.p.repository.JpaGuestRepository;
@@ -16,16 +17,16 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
 
     @Override
     public Guest saveGuest(Guest guest) {
-        GuestEnt guestEnt = mapGuestFromDomainToDb(guest);
+        GuestEnt guestEnt = GuestMapper.mapGuestFromDomainToDb(guest);
 
-        AddressEnt addressEnt = mapAddressFromDomainToDb(guest.getAddress());
+        AddressEnt addressEnt = GuestMapper.mapAddressFromDomainToDb(guest.getAddress());
         guestEnt.setAddress(addressEnt);
 
-        GuestTypeEnt guestTypeDb = mapGuestTypeFromDomainToDb(guest.getGuestType());
+        GuestTypeEnt guestTypeDb = GuestMapper.mapGuestTypeFromDomainToDb(guest.getGuestType());
         guestEnt.setGuestType(guestTypeDb);
 
         GuestEnt savedGuest = guestRepository.saveGuest(guestEnt);
-        return mapGuestFromDbToDomain(savedGuest);
+        return GuestMapper.mapGuestFromDbToDomain(savedGuest);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
     @Override
     public Guest findGuestByPersonalId(String personalId) {
         GuestEnt guestEnt = guestRepository.findGuestByPersonalId(personalId);
-        return mapGuestFromDbToDomain(guestEnt);
+        return GuestMapper.mapGuestFromDbToDomain(guestEnt);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
         List<Guest> allGuests = new ArrayList<>();
 
         for (GuestEnt guestEnt : guestRepository.findAllGuests()) {
-            allGuests.add(mapGuestFromDbToDomain(guestEnt));
+            allGuests.add(GuestMapper.mapGuestFromDbToDomain(guestEnt));
         }
 
         return allGuests;
@@ -53,88 +54,6 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
     @Override
     public List<Rent> getGuestRents(String personalId) {
         return List.of();
-    }
-
-    private Guest mapGuestFromDbToDomain(GuestEnt guestEnt) {
-        Address address = mapAddressFromDbToDomain(guestEnt.getAddress());
-        GuestType guestType = mapGuestTypeFromDbToDomain(guestEnt.getGuestType());
-
-
-        Guest guest = new Guest(guestEnt.getUuid(),
-                                guestEnt.getFirstName(),
-                                guestEnt.getLastName(),
-                                guestEnt.getPersonalId(),
-                                address,
-                                guestType);
-
-        guest.setArchived(guestEnt.isArchived());
-
-        return guest;
-    }
-
-
-
-
-    private GuestEnt mapGuestFromDomainToDb(Guest guest) {
-        GuestEnt guestEnt = new GuestEnt();
-
-        guestEnt.setPersonalId(guest.getPersonalId());
-        guestEnt.setFirstName(guest.getFirstName());
-        guestEnt.setLastName(guest.getLastName());
-        guestEnt.setArchived(guest.isArchived());
-        guestEnt.setUuid(guest.getUuid());
-
-
-
-        return guestEnt;
-    }
-
-    private GuestTypeEnt mapGuestTypeFromDomainToDb(GuestType guestTypeDomain) {
-        GuestTypeEnt guestTypeDb;
-
-        if (guestTypeDomain instanceof GuestTypeDefault) {
-            guestTypeDb = new GuestTypeDefaultEnt();
-        } else if (guestTypeDomain instanceof GuestTypeExtra) {
-            guestTypeDb = new GuestTypeExtraEnt();
-        } else {
-            guestTypeDb = new GuestTypePremiumEnt();
-        }
-
-        guestTypeDb.setMealServiceType(guestTypeDomain.getMealServiceType());
-        guestTypeDb.setSaunaAvailable(guestTypeDomain.isSaunaAvailable());
-        guestTypeDb.setUnlimitedWifi(guestTypeDomain.isUnlimitedWifi());
-
-        return guestTypeDb;
-    }
-
-    private GuestType mapGuestTypeFromDbToDomain(GuestTypeEnt guestTypeEnt) {
-        GuestType guestType;
-
-        if (guestTypeEnt instanceof GuestTypeDefaultEnt) {
-            guestType = new GuestTypeDefault();
-        } else if (guestTypeEnt instanceof GuestTypeExtraEnt) {
-            guestType = new GuestTypeExtra();
-        } else {
-            guestType = new GuestTypePremium();
-        }
-
-        return guestType;
-    }
-
-    private AddressEnt mapAddressFromDomainToDb(Address address) {
-        AddressEnt addressEnt = new AddressEnt();
-
-        addressEnt.setCity(address.getCity());
-        addressEnt.setStreet(address.getStreet());
-        addressEnt.setNumber(address.getNumber());
-
-        return addressEnt;
-    }
-
-    private Address mapAddressFromDbToDomain(AddressEnt addressEnt) {
-        Address address = new Address(addressEnt.getCity(), addressEnt.getStreet(), addressEnt.getNumber());
-
-        return address;
     }
 
 }
