@@ -47,6 +47,12 @@ public class JpaRoomRepository {
                 foundRoomEnt.setArchived(isArchived);
 
                 transaction.commit();
+            } catch (EntityNotFoundException e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw e;
             } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
@@ -54,8 +60,6 @@ public class JpaRoomRepository {
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
                     throw new ConcurrentOperationException("Wykryto współbieżną modyfikację pokoju o numerze = " + number + ", " + e.getMessage());
-                } else if (e instanceof EntityNotFoundException || e.getCause() instanceof EntityNotFoundException) {
-                    throw (EntityNotFoundException) (e instanceof EntityNotFoundException ? e : e.getCause());
                 } else {
                     throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji pokoju o numerze = " + number + ", " + e.getMessage());
                 }
@@ -65,7 +69,7 @@ public class JpaRoomRepository {
         }
     }
     private RoomEnt findRoomByNumber(String number, EntityManager em) {
-        return em.createQuery("SELECT r FROM RoomEnt r WHERE r.number = :number", RoomEnt.class)
+        return em.createQuery("SELECT r FROM Room r WHERE r.number = :number", RoomEnt.class)
                 .setParameter("number", number)
                 .getResultStream()
                 .findFirst()
@@ -80,7 +84,7 @@ public class JpaRoomRepository {
 
     public List<RoomEnt> findAllRooms() {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.createQuery("SELECT r FROM RoomEnt r", RoomEnt.class)
+            return em.createQuery("SELECT r FROM Room r", RoomEnt.class)
                     .getResultList();
         }
     }

@@ -1,8 +1,10 @@
 package pl.lodz.p.model.db;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
-@Entity
+@Entity(name = "Guest_type")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE_NAME", discriminatorType = DiscriminatorType.STRING)
 @Table(name = "GUEST_TYPES")
@@ -11,8 +13,16 @@ public class GuestTypeEnt {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotNull
+    @Column(name = "UNLIMITED_WIFI")
     private boolean unlimitedWifi;
+
+    @NotNull
+    @Column(name = "SAUNA_AVAILABLE")
     private boolean saunaAvailable;
+
+    @NotNull
+    @Column(name = "MEAL_SERVICE_TYPE")
     private String mealServiceType;
 
     public void setId(Long id) {

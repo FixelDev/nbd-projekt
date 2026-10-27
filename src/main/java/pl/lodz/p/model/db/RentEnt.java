@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
+@Entity(name = "Rent")
 @Table(name = "RENTS")
 public class RentEnt extends AbstractEntity{
     @Id

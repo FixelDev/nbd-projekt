@@ -11,4 +11,5 @@ public interface JpaRentRepositoryAdapterInterface {
     void endRent(UUID uuid);
     Rent findRentByUuid(UUID uuid);
     List<Rent> findAllRents();
+    List<Rent> findAllGuestRents(String personalId);
 }

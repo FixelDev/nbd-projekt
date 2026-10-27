@@ -3,7 +3,7 @@ package pl.lodz.p.model.db;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
-@Entity
+@Entity(name = "Room")
 @Table(name = "ROOMS")
 public class RoomEnt extends AbstractEntity{
 

@@ -17,4 +17,16 @@ public class GuestTypeDefault extends GuestType{
         return "GuestType: DEFAULT" + '\n' +
                 super.toString();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

@@ -1,5 +1,7 @@
 package pl.lodz.p.model.domain;
 
+import java.util.Objects;
+
 public abstract class GuestType {
     private boolean unlimitedWifi;
     private boolean saunaAvailable;
@@ -36,5 +38,20 @@ public abstract class GuestType {
         return  "unlimitedWifi: " + unlimitedWifi + '\n' +
                 "saunaAvailable: " + saunaAvailable + '\n' +
                 "mealServiceType: '" + mealServiceType + '\'' + '\n';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GuestType guestType = (GuestType) o;
+        return unlimitedWifi == guestType.unlimitedWifi &&
+                saunaAvailable == guestType.saunaAvailable &&
+                Objects.equals(mealServiceType, guestType.mealServiceType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(unlimitedWifi, saunaAvailable, mealServiceType);
     }
 }

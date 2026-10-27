@@ -24,6 +24,7 @@ public class JpaGuestRepository {
                 transaction.begin();
                 em.persist(guestEnt.getGuestType());
                 em.persist(guestEnt);
+                IO.println("TUTAJJJJ: " + guestEnt.getLastName());
                 transaction.commit();
                 return guestEnt;
             } catch (Exception e) {
@@ -50,6 +51,12 @@ public class JpaGuestRepository {
                 foundGestEnt.setArchived(isArchived);
 
                 transaction.commit();
+            } catch (EntityNotFoundException e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw e;
             } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
@@ -57,8 +64,6 @@ public class JpaGuestRepository {
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
                     throw new ConcurrentOperationException("Wykryto współbieżną modyfikację gościa o personalId = " + personalId + ", " + e.getMessage());
-                } else if (e.getCause() instanceof EntityNotFoundException) {
-                    throw e;
                 } else {
                     throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji gościa o personalId = " + personalId + ", " + e.getMessage());
                 }

@@ -71,7 +71,15 @@ public class JpaRentRepository {
 
     public List<RentEnt> findAllRents() {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.createQuery("SELECT g FROM RentEnt g", RentEnt.class)
+            return em.createQuery("SELECT g FROM Rent g", RentEnt.class)
+                    .getResultList();
+        }
+    }
+
+    public List<RentEnt> findGuestRents(String personalId) {
+        try (EntityManager em = emf.createEntityManager()) {
+            return em.createQuery("select r from Rent r where r.guest.personalId = :personalId", RentEnt.class)
+                    .setParameter("personalId", personalId)
                     .getResultList();
         }
     }
@@ -84,10 +92,18 @@ public class JpaRentRepository {
                 transaction.begin();
 
                 RentEnt foundRentEnt = findRentByUuid(uuid, em);
+                RoomEnt roomEnt = foundRentEnt.getRoom();
                 em.lock(foundRentEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+                em.lock(roomEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
                 foundRentEnt.setActive(false);
-
+                roomEnt.setRented(false);
                 transaction.commit();
+            } catch (EntityNotFoundException e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw e;
             } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
@@ -95,8 +111,6 @@ public class JpaRentRepository {
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
                     throw new ConcurrentOperationException("Wykryto współbieżną modyfikację rezerwacji o UUID = " + uuid + ", " + e.getMessage());
-                } else if (e.getCause() instanceof EntityNotFoundException) {
-                    throw e;
                 } else {
                     throw new RepositoryException("Wystąpił błąd przy zakończeniu rezerwacji o UUID = " + uuid + ", " + e.getMessage());
                 }
@@ -115,7 +129,7 @@ public class JpaRentRepository {
     }
 
     private RoomEnt findRoomByNumber(String number, EntityManager em) {
-        return em.createQuery("SELECT r FROM RoomEnt r WHERE r.number = :number", RoomEnt.class)
+        return em.createQuery("SELECT r FROM Room r WHERE r.number = :number", RoomEnt.class)
                 .setParameter("number", number)
                 .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .getResultStream()

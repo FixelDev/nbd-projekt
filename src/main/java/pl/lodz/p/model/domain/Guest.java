@@ -2,6 +2,7 @@ package pl.lodz.p.model.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Guest {
@@ -12,7 +13,6 @@ public class Guest {
     private boolean archived;
     private Address address;
     private GuestType guestType;
-    private List<Rent> currentRents = new ArrayList<>();
 
     public Guest(String firstName, String lastName, String personalId, Address address, GuestType guestType) {
         this.firstName = firstName;
@@ -94,5 +94,24 @@ public class Guest {
                 "archived: " + archived + '\n' +
                 address + '\n' +
                 guestType + '\n';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Guest guest = (Guest) o;
+        return archived == guest.archived &&
+                Objects.equals(uuid, guest.uuid) &&
+                Objects.equals(firstName, guest.firstName) &&
+                Objects.equals(lastName, guest.lastName) &&
+                Objects.equals(personalId, guest.personalId) &&
+                Objects.equals(address, guest.address) &&
+                Objects.equals(guestType, guest.guestType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, firstName, lastName, personalId, archived, address, guestType);
     }
 }

@@ -1,6 +1,7 @@
 package pl.lodz.p.model.db;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,6 +21,7 @@ public class GuestEnt extends AbstractEntity {
     private String firstName;
 
     @NotEmpty
+    @NotBlank
     @Column(name = "LAST_NAME")
     private String lastName;
 
@@ -38,10 +40,6 @@ public class GuestEnt extends AbstractEntity {
     @NotNull
     @JoinColumn(name = "GUEST_TYPE_ID")
     private GuestTypeEnt guestType;
-
-    @OneToMany(mappedBy = "guest")
-    private List<RentEnt> currentRents = new ArrayList<>();
-
 
     public Long getId() {
         return id;
@@ -78,8 +76,6 @@ public class GuestEnt extends AbstractEntity {
     public void setArchived(boolean archived) {
         this.archived = archived;
     }
-
-
 
     public void setGuestType(GuestTypeEnt guestType) {
         this.guestType = guestType;

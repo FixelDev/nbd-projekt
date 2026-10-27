@@ -44,4 +44,15 @@ public class JpaRentRepositoryAdapter implements JpaRentRepositoryAdapterInterfa
         return allRents;
     }
 
+    @Override
+    public List<Rent> findAllGuestRents(String personalId) {
+        List<Rent> guestRents = new ArrayList<>();
+
+        for (RentEnt rentEnt : rentRepository.findGuestRents(personalId)) {
+            guestRents.add(RentMapper.mapRentFromDbToDomain(rentEnt));
+        }
+
+        return guestRents;
+    }
+
 }

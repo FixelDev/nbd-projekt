@@ -24,36 +24,43 @@ public class GuestMapper {
 
 
 
-    public static  GuestEnt mapGuestFromDomainToDb(Guest guest) {
+    public static GuestEnt mapGuestFromDomainToDb(Guest guest) {
         GuestEnt guestEnt = new GuestEnt();
+        AddressEnt addressEnt = mapAddressFromDomainToDb(guest.getAddress());
+        GuestTypeEnt guestTypeEnt = mapGuestTypeFromDomainToDb(guest.getGuestType());
 
         guestEnt.setPersonalId(guest.getPersonalId());
         guestEnt.setFirstName(guest.getFirstName());
         guestEnt.setLastName(guest.getLastName());
         guestEnt.setArchived(guest.isArchived());
         guestEnt.setUuid(guest.getUuid());
-
-
+        guestEnt.setAddress(addressEnt);
+        guestEnt.setGuestType(guestTypeEnt);
 
         return guestEnt;
     }
 
-    public static  GuestTypeEnt mapGuestTypeFromDomainToDb(GuestType guestTypeDomain) {
-        GuestTypeEnt guestTypeDb;
+    public static GuestTypeEnt mapGuestTypeFromDomainToDb(GuestType guestTypeDomain) {
+        GuestTypeEnt guestTypeEnt;
 
-        if (guestTypeDomain instanceof GuestTypeDefault) {
-            guestTypeDb = new GuestTypeDefaultEnt();
-        } else if (guestTypeDomain instanceof GuestTypeExtra) {
-            guestTypeDb = new GuestTypeExtraEnt();
+        if (guestTypeDomain instanceof GuestTypeExtra guestTypeExtra) {
+            GuestTypeExtraEnt guestTypeExtraEnt = new GuestTypeExtraEnt();
+            guestTypeExtraEnt.setLoyaltyPoints(guestTypeExtra.getLoyaltyPoints());
+            guestTypeEnt = guestTypeExtraEnt;
+        } else if (guestTypeDomain instanceof GuestTypePremium guestTypePremium) {
+            GuestTypePremiumEnt guestTypePremiumEnt = new GuestTypePremiumEnt();
+            guestTypePremiumEnt.setAttractionDiscount(guestTypePremium.getAttractionDiscount());
+            guestTypeEnt = guestTypePremiumEnt;
         } else {
-            guestTypeDb = new GuestTypePremiumEnt();
+            GuestTypeDefaultEnt guestTypeDefaultEnt = new GuestTypeDefaultEnt();
+            guestTypeEnt = guestTypeDefaultEnt;
         }
 
-        guestTypeDb.setMealServiceType(guestTypeDomain.getMealServiceType());
-        guestTypeDb.setSaunaAvailable(guestTypeDomain.isSaunaAvailable());
-        guestTypeDb.setUnlimitedWifi(guestTypeDomain.isUnlimitedWifi());
+        guestTypeEnt.setMealServiceType(guestTypeDomain.getMealServiceType());
+        guestTypeEnt.setSaunaAvailable(guestTypeDomain.isSaunaAvailable());
+        guestTypeEnt.setUnlimitedWifi(guestTypeDomain.isUnlimitedWifi());
 
-        return guestTypeDb;
+        return guestTypeEnt;
     }
 
     public static  GuestType mapGuestTypeFromDbToDomain(GuestTypeEnt guestTypeEnt) {

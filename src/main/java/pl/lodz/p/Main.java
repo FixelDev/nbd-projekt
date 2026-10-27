@@ -29,9 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-//        Address address = new Address("dasdas", "oooo", "2a");
-//        GuestType guestType = new GuestTypeExtra();
-//        Guest guest = new Guest("oh", "myszeczko", "1234", address, guestType);
+        Address address = new Address("dasdas", "oooo", "2a");
+        GuestType guestType = new GuestTypeExtra();
+        Guest guest = new Guest("oh", "", "12", address, guestType);
 //        Room room = new Room("12", 3, 12.50);
 
 
@@ -46,108 +46,108 @@ public class Main {
         JpaRentRepository repRent = new JpaRentRepository(emf);
         JpaRentRepositoryAdapter adapterRent = new JpaRentRepositoryAdapter(repRent);
 
-        String strBegin = "1986-04-08 12:30";
-        String strEnd = "1986-04-10 12:30";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        LocalDateTime dateTimeBegin = LocalDateTime.parse(strBegin, formatter);
-        LocalDateTime dateTimeEnd = LocalDateTime.parse(strEnd, formatter);
-
-
-        Guest guest = adapter.findGuestByPersonalId("1234");
-        Room room = adapterRoom.findRoomByNumber("12");
-
-
-        CyclicBarrier barrier = new CyclicBarrier(2);
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-
-        AtomicInteger successCount = new AtomicInteger(0);
-        AtomicInteger exceptionCount = new AtomicInteger(0);
-
-        Runnable task1 = () -> {
-            try {
-                Rent rent1 = new Rent(dateTimeBegin, dateTimeEnd, guest, room);
-                barrier.await(); // Czeka na drugi wątek, żeby wystartować idealnie równocześnie!
-                adapterRent.saveRent(rent1);
-                successCount.incrementAndGet();
-                System.out.println("Wątek 1: SUKCES - wynajęto pokój!");
-            } catch (Exception e) {
-                exceptionCount.incrementAndGet();
-                System.err.println("Wątek 1: BŁĄD - " + e.getMessage());
-                e.printStackTrace();
-
-
-                if (e instanceof PessimisticLockException | e.getCause() instanceof PessimisticLockException) {
-                    System.err.println("PESYMISTYCZNY");
-                }
-
-                if (e instanceof OptimisticLockException | e.getCause() instanceof OptimisticLockException) {
-                    System.err.println("OPTYMISTYCZNY");
-                }
-            }
-        };
-
-        Runnable task2 = () -> {
-            try {
-                Rent rent2 = new Rent(dateTimeBegin, dateTimeEnd, guest, room);
-                barrier.await(); // Czeka na pierwszy wątek!
-                adapterRent.saveRent(rent2);
-                successCount.incrementAndGet();
-                System.out.println("Wątek 2: SUKCES - wynajęto pokój!");
-            } catch (Exception e) {
-                exceptionCount.incrementAndGet();
-                System.err.println("Wątek 2: BŁĄD - " + e.getMessage());
-                e.printStackTrace();
-
-                if (e instanceof PessimisticLockException | e.getCause() instanceof PessimisticLockException) {
-                    System.err.println("PESYMISTYCZNY");
-                }
-
-                if (e instanceof OptimisticLockException | e.getCause() instanceof OptimisticLockException) {
-                    System.err.println("OPTYMISTYCZNY");
-                }
-
-
-            }
-        };
-
-        executor.submit(task1);
-        executor.submit(task2);
-
-        executor.shutdown();
-        try {
-            executor.awaitTermination(10, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("Udane rezerwacje: " + successCount.get()); // Powinno wynosić 1
-        System.out.println("Odrzucone rezerwacje: " + exceptionCount.get());
-
-        try {
-            Rent rent = adapterRent.findRentByUuid(UUID.fromString("93d816ea-c30b-492c-8351-3b094d592dee"));
-            IO.println(rent);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
-        try {
-            List<Rent> rents = adapterRent.findAllRents();
-
-            for (Rent rent : rents) {
-                IO.println(rent);
-            }
-
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
-        try {
-            adapterRent.endRent(UUID.fromString("9a2317b6-9e5f-404a-b4d8-0e648c016831"));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
+//        String strBegin = "1986-04-08 12:30";
+//        String strEnd = "1986-04-10 12:30";
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//
+//        LocalDateTime dateTimeBegin = LocalDateTime.parse(strBegin, formatter);
+//        LocalDateTime dateTimeEnd = LocalDateTime.parse(strEnd, formatter);
+//
+//
+//        Guest guest = adapter.findGuestByPersonalId("1234");
+//        Room room = adapterRoom.findRoomByNumber("12");
+//
+//
+//        CyclicBarrier barrier = new CyclicBarrier(2);
+//        ExecutorService executor = Executors.newFixedThreadPool(2);
+//
+//        AtomicInteger successCount = new AtomicInteger(0);
+//        AtomicInteger exceptionCount = new AtomicInteger(0);
+//
+//        Runnable task1 = () -> {
+//            try {
+//                Rent rent1 = new Rent(dateTimeBegin, dateTimeEnd, guest, room);
+//                barrier.await(); // Czeka na drugi wątek, żeby wystartować idealnie równocześnie!
+//                adapterRent.saveRent(rent1);
+//                successCount.incrementAndGet();
+//                System.out.println("Wątek 1: SUKCES - wynajęto pokój!");
+//            } catch (Exception e) {
+//                exceptionCount.incrementAndGet();
+//                System.err.println("Wątek 1: BŁĄD - " + e.getMessage());
+//                e.printStackTrace();
+//
+//
+//                if (e instanceof PessimisticLockException | e.getCause() instanceof PessimisticLockException) {
+//                    System.err.println("PESYMISTYCZNY");
+//                }
+//
+//                if (e instanceof OptimisticLockException | e.getCause() instanceof OptimisticLockException) {
+//                    System.err.println("OPTYMISTYCZNY");
+//                }
+//            }
+//        };
+//
+//        Runnable task2 = () -> {
+//            try {
+//                Rent rent2 = new Rent(dateTimeBegin, dateTimeEnd, guest, room);
+//                barrier.await(); // Czeka na pierwszy wątek!
+//                adapterRent.saveRent(rent2);
+//                successCount.incrementAndGet();
+//                System.out.println("Wątek 2: SUKCES - wynajęto pokój!");
+//            } catch (Exception e) {
+//                exceptionCount.incrementAndGet();
+//                System.err.println("Wątek 2: BŁĄD - " + e.getMessage());
+//                e.printStackTrace();
+//
+//                if (e instanceof PessimisticLockException | e.getCause() instanceof PessimisticLockException) {
+//                    System.err.println("PESYMISTYCZNY");
+//                }
+//
+//                if (e instanceof OptimisticLockException | e.getCause() instanceof OptimisticLockException) {
+//                    System.err.println("OPTYMISTYCZNY");
+//                }
+//
+//
+//            }
+//        };
+//
+//        executor.submit(task1);
+//        executor.submit(task2);
+//
+//        executor.shutdown();
+//        try {
+//            executor.awaitTermination(10, TimeUnit.SECONDS);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        System.out.println("Udane rezerwacje: " + successCount.get()); // Powinno wynosić 1
+//        System.out.println("Odrzucone rezerwacje: " + exceptionCount.get());
+//
+//        try {
+//            Rent rent = adapterRent.findRentByUuid(UUID.fromString("93d816ea-c30b-492c-8351-3b094d592dee"));
+//            IO.println(rent);
+//        } catch (Exception e) {
+//            System.err.println(e.getMessage());
+//        }
+//
+//        try {
+//            List<Rent> rents = adapterRent.findAllRents();
+//
+//            for (Rent rent : rents) {
+//                IO.println(rent);
+//            }
+//
+//        } catch (Exception e) {
+//            System.err.println(e.getMessage());
+//        }
+//
+//        try {
+//            adapterRent.endRent(UUID.fromString("9a2317b6-9e5f-404a-b4d8-0e648c016831"));
+//        } catch (Exception e) {
+//            System.err.println(e.getMessage());
+//        }
 
 
 
@@ -158,11 +158,11 @@ public class Main {
 //            System.err.println(e.getMessage());
 //        }
 //
-//        try {
-//            adapter.saveGuest(guest);
-//        } catch (Exception e) {
-//            System.err.println(e.getMessage());
-//        }
+        try {
+            adapter.saveGuest(guest);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
 
 //        try {
 //            adapterRent.saveRent(rent);

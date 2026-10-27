@@ -18,13 +18,6 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
     @Override
     public Guest saveGuest(Guest guest) {
         GuestEnt guestEnt = GuestMapper.mapGuestFromDomainToDb(guest);
-
-        AddressEnt addressEnt = GuestMapper.mapAddressFromDomainToDb(guest.getAddress());
-        guestEnt.setAddress(addressEnt);
-
-        GuestTypeEnt guestTypeDb = GuestMapper.mapGuestTypeFromDomainToDb(guest.getGuestType());
-        guestEnt.setGuestType(guestTypeDb);
-
         GuestEnt savedGuest = guestRepository.saveGuest(guestEnt);
         return GuestMapper.mapGuestFromDbToDomain(savedGuest);
     }
