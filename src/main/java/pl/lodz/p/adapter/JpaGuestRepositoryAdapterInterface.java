@@ -10,5 +10,4 @@ public interface JpaGuestRepositoryAdapterInterface {
     void setGuestArchivedStatus(String personalId, boolean isArchived);
     Guest findGuestByPersonalId(String personalId);
     List<Guest> findAllGuests();
-    List<Rent> getGuestRents(String personalId);
 }

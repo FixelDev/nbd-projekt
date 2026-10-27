@@ -86,34 +86,34 @@ class JpaRoomRepositoryAdapterTest extends AbstractDatabaseTest {
         assertTrue(foundRoom.isArchived());
     }
 
-//    @Test
-//    public void setRoomArchivedStatusRaceTest() {
-//        adapter.saveRoom(validRoom);
-//
-//        AtomicInteger successCount = new AtomicInteger(0);
-//        ConcurrentLinkedQueue<Exception> exceptions = new ConcurrentLinkedQueue<>();
-//        CyclicBarrier barrier = new CyclicBarrier(2);
-//
-//        Runnable raceTask = () -> {
-//            try {
-//                barrier.await();
-//                adapter.setRoomArchivedStatus("12", true);
-//                successCount.incrementAndGet();
-//            } catch (Exception e) {
-//                exceptions.add(e);
-//            }
-//        };
-//
-//
-//        CompletableFuture<Void> task1 = CompletableFuture.runAsync(raceTask);
-//        CompletableFuture<Void> task2 = CompletableFuture.runAsync(raceTask);
-//
-//        CompletableFuture.allOf(task1, task2).join();
-//
-//        assertEquals(1, successCount.get());
-//        assertEquals(1, exceptions.size());
-//        assertInstanceOf(ConcurrentOperationException.class, exceptions.peek());
-//    }
+    @Test
+    public void setRoomArchivedStatusRaceTest() {
+        adapter.saveRoom(validRoom);
+
+        AtomicInteger successCount = new AtomicInteger(0);
+        ConcurrentLinkedQueue<Exception> exceptions = new ConcurrentLinkedQueue<>();
+        CyclicBarrier barrier = new CyclicBarrier(2);
+
+        Runnable raceTask = () -> {
+            try {
+                barrier.await();
+                adapter.setRoomArchivedStatus("12", true);
+                successCount.incrementAndGet();
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        };
+
+
+        CompletableFuture<Void> task1 = CompletableFuture.runAsync(raceTask);
+        CompletableFuture<Void> task2 = CompletableFuture.runAsync(raceTask);
+
+        CompletableFuture.allOf(task1, task2).join();
+
+        assertEquals(1, successCount.get());
+        assertEquals(1, exceptions.size());
+        assertInstanceOf(ConcurrentOperationException.class, exceptions.peek());
+    }
 
     @Test
     public void findRoomByNumberTest() {

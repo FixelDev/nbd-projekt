@@ -6,6 +6,7 @@ import pl.lodz.p.exception.EntityNotFoundException;
 import pl.lodz.p.exception.RepositoryException;
 import pl.lodz.p.model.db.GuestEnt;
 import pl.lodz.p.model.db.RoomEnt;
+import pl.lodz.p.model.domain.Guest;
 
 import java.util.List;
 
@@ -38,27 +39,37 @@ public class JpaGuestRepository {
         }
     }
 
-    public void setGuestArchivedStatus(GuestEnt guestEnt, boolean isArchived) {
+    public void setGuestArchivedStatus(String personalId, boolean isArchived) {
         try (EntityManager em = emf.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
 
             try {
                 transaction.begin();
+                GuestEnt guestEnt = findGuestByPersonalId(personalId, em);
+
+                if (guestEnt.isArchived() == isArchived) {
+                    throw new ConcurrentOperationException("Stan archiwizacji gościa o personalId = " + personalId + " został już zmieniony");
+                }
 
                 guestEnt.setArchived(isArchived);
-                GuestEnt mergedGuest = em.merge(guestEnt);
-                em.lock(mergedGuest, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+                em.lock(guestEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
                 transaction.commit();
-            }  catch (Exception e) {
+            } catch (ConcurrentOperationException e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw e;
+            } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
                 }
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
-                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację gościa o personalId = " + guestEnt.getPersonalId() + ", " + e.getMessage());
+                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację gościa o personalId = " + personalId + ", " + e.getMessage());
                 } else {
-                    throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji gościa o personalId = " + guestEnt.getPersonalId() + ", " + e.getMessage());
+                    throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji gościa o personalId = " + personalId + ", " + e.getMessage());
                 }
 
             }

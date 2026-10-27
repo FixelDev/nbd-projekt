@@ -37,27 +37,37 @@ public class JpaRoomRepository {
         }
     }
 
-    public void setRoomArchivedStatus(RoomEnt roomEnt, boolean isArchived) {
+    public void setRoomArchivedStatus(String number, boolean isArchived) {
         try (EntityManager em = emf.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
 
             try {
                 transaction.begin();
+                RoomEnt roomEnt = findRoomByNumber(number, em);
+
+                if (roomEnt.isArchived() == isArchived) {
+                    throw new ConcurrentOperationException("Stan archiwizacji pokoju o numerze = " + number + " został już zmieniony");
+                }
 
                 roomEnt.setArchived(isArchived);
-                RoomEnt mergedRoom = em.merge(roomEnt);
-                em.lock(mergedRoom, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+                em.lock(roomEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
                 transaction.commit();
+            } catch (ConcurrentOperationException e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+
+                throw e;
             } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
                 }
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
-                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację pokoju o numerze = " + roomEnt.getNumber() + ", " + e.getMessage());
+                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację pokoju o numerze = " + number + ", " + e.getMessage());
                 } else {
-                    throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji pokoju o numerze = " + roomEnt.getNumber() + ", " + e.getMessage());
+                    throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji pokoju o numerze = " + number + ", " + e.getMessage());
                 }
 
             }

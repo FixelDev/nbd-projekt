@@ -78,7 +78,7 @@ class JpaGuestRepositoryTest extends AbstractDatabaseTest {
 
         assertFalse(foundGuest.isArchived());
 
-        assertDoesNotThrow(() -> guestRepository.setGuestArchivedStatus(guestRepository.findGuestByPersonalId("1234"), true));
+        assertDoesNotThrow(() -> guestRepository.setGuestArchivedStatus("1234", true));
         foundGuest = GuestMapper.mapGuestFromDbToDomain(guestRepository.findGuestByPersonalId("1234"));
 
         assertTrue(foundGuest.isArchived());
@@ -95,9 +95,8 @@ class JpaGuestRepositoryTest extends AbstractDatabaseTest {
 
         Runnable raceTask = () -> {
             try {
-                GuestEnt guestEnt = guestRepository.findGuestByPersonalId("1234");
                 barrier.await();
-                guestRepository.setGuestArchivedStatus(guestEnt, true);
+                guestRepository.setGuestArchivedStatus("1234", true);
                 successCount.incrementAndGet();
             } catch (Exception e) {
                 exceptions.add(e);

@@ -84,25 +84,28 @@ public class JpaRentRepository {
         }
     }
 
-    public void endRent(RentEnt rentEnt) {
+    public void endRent(UUID uuid) {
         try (EntityManager em = emf.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
 
             try {
                 transaction.begin();
-                RentEnt mergedRent = em.merge(rentEnt);
+                RentEnt rentEnt = findRentByUuid(uuid, em);
 
-                mergedRent.setActive(false);
+                if (!rentEnt.isActive()) {
+                    throw new ConcurrentOperationException("Rezerwacja o UUID = " + uuid + " została już zakończona");
+                }
 
-                RoomEnt roomEnt = mergedRent.getRoom();
-                roomEnt.setRented(false);
-                em.merge(roomEnt);
+                RoomEnt roomEnt = rentEnt.getRoom();
 
-                em.lock(mergedRent, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+                em.lock(rentEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
                 em.lock(roomEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
+                rentEnt.setActive(false);
+                roomEnt.setRented(false);
+
                 transaction.commit();
-            } catch (EntityNotFoundException e) {
+            } catch (EntityNotFoundException | ConcurrentOperationException e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
                 }
@@ -114,9 +117,9 @@ public class JpaRentRepository {
                 }
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
-                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację rezerwacji o UUID = " + rentEnt.getUuid() + ", " + e.getMessage());
+                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację rezerwacji o UUID = " + uuid + ", " + e.getMessage());
                 } else {
-                    throw new RepositoryException("Wystąpił błąd przy zakończeniu rezerwacji o UUID = " + rentEnt.getUuid() + ", " + e.getMessage());
+                    throw new RepositoryException("Wystąpił błąd przy zakończeniu rezerwacji o UUID = " + uuid + ", " + e.getMessage());
                 }
 
             }

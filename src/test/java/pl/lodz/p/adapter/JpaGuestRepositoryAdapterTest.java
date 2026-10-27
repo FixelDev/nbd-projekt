@@ -88,34 +88,34 @@ class JpaGuestRepositoryAdapterTest extends AbstractDatabaseTest {
         assertTrue(foundGuest.isArchived());
     }
 
-//    @Test
-//    public void setGuestArchivedStatusRaceTest() {
-//        adapter.saveGuest(validGuest);
-//
-//        AtomicInteger successCount = new AtomicInteger(0);
-//        ConcurrentLinkedQueue<Exception> exceptions = new ConcurrentLinkedQueue<>();
-//        CyclicBarrier barrier = new CyclicBarrier(2);
-//
-//        Runnable raceTask = () -> {
-//            try {
-//                barrier.await();
-//                adapter.setGuestArchivedStatus("1234", true);
-//                successCount.incrementAndGet();
-//            } catch (Exception e) {
-//                exceptions.add(e);
-//            }
-//        };
-//
-//
-//        CompletableFuture<Void> task1 = CompletableFuture.runAsync(raceTask);
-//        CompletableFuture<Void> task2 = CompletableFuture.runAsync(raceTask);
-//
-//        CompletableFuture.allOf(task1, task2).join();
-//
-//        assertEquals(1, successCount.get());
-//        assertEquals(1, exceptions.size());
-//        assertInstanceOf(ConcurrentOperationException.class, exceptions.peek());
-//    }
+    @Test
+    public void setGuestArchivedStatusRaceTest() {
+        adapter.saveGuest(validGuest);
+
+        AtomicInteger successCount = new AtomicInteger(0);
+        ConcurrentLinkedQueue<Exception> exceptions = new ConcurrentLinkedQueue<>();
+        CyclicBarrier barrier = new CyclicBarrier(2);
+
+        Runnable raceTask = () -> {
+            try {
+                barrier.await();
+                adapter.setGuestArchivedStatus("1234", true);
+                successCount.incrementAndGet();
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        };
+
+
+        CompletableFuture<Void> task1 = CompletableFuture.runAsync(raceTask);
+        CompletableFuture<Void> task2 = CompletableFuture.runAsync(raceTask);
+
+        CompletableFuture.allOf(task1, task2).join();
+
+        assertEquals(1, successCount.get());
+        assertEquals(1, exceptions.size());
+        assertInstanceOf(ConcurrentOperationException.class, exceptions.peek());
+    }
 
     @Test
     public void findGuestByPersonalIdTest() {

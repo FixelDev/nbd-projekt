@@ -1,8 +1,8 @@
 package pl.lodz.p.manager;
 
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityNotFoundException;
 import pl.lodz.p.adapter.JpaGuestRepositoryAdapter;
+import pl.lodz.p.exception.EntityNotFoundException;
 import pl.lodz.p.exception.InvalidValueException;
 import pl.lodz.p.exception.UniqueValueException;
 import pl.lodz.p.model.domain.*;
@@ -32,11 +32,11 @@ public class GuestManager {
     }
 
     public void unregisterGuest(String personalId) {
-        adapter.setGuestArchivedStatus(personalId, false);
+        adapter.setGuestArchivedStatus(personalId, true);
     }
 
     public void activateGuest(String personalId) {
-        adapter.setGuestArchivedStatus(personalId, true);
+        adapter.setGuestArchivedStatus(personalId, false);
     }
 
     public Guest findGuestByPersonalId(String personalId) {
@@ -47,9 +47,6 @@ public class GuestManager {
         return adapter.findAllGuests();
     }
 
-    public List<Rent> getGuestRents(String personalId) {
-        return adapter.getGuestRents(personalId);
-    }
 
 
     private GuestType mapNameToGuestType(String guestTypeName) {

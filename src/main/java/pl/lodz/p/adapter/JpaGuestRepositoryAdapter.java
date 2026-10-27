@@ -24,8 +24,7 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
 
     @Override
     public void setGuestArchivedStatus(String personalId, boolean isArchived) {
-        GuestEnt guestEnt = guestRepository.findGuestByPersonalId(personalId);
-        guestRepository.setGuestArchivedStatus(guestEnt, isArchived);
+        guestRepository.setGuestArchivedStatus(personalId, isArchived);
     }
 
     @Override
@@ -43,11 +42,6 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
         }
 
         return allGuests;
-    }
-
-    @Override
-    public List<Rent> getGuestRents(String personalId) {
-        return List.of();
     }
 
 }

@@ -33,10 +33,12 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
     private Guest validGuest2;
     private Room validRoom;
     private Room validRoom2;
+    private Room validRoom3;
     private Room archivedRoom;
     private Rent validRent;
     private Rent validRent2;
     private Rent validRent3;
+    private Rent validRent4;
     private Rent invalidRentNullBeginTime;
     private Rent invalidRentNotUniqueUuid;
     private Rent invalidRentArchivedRoom;
@@ -74,10 +76,12 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
         validGuest2 = new Guest("Jakub", "Pawlak", "456", address, guestType);
         validRoom = new Room("12", 3, 200.0);
         validRoom2 = new Room("13", 2, 100.0);
+        validRoom3 = new Room("16", 2, 100.0);
         archivedRoom = new Room("14", 2, 100.0);
         validRent = new Rent(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087"), dateTimeBegin, dateTimeEnd, validGuest, validRoom, 200.0);
         validRent2 = new Rent(UUID.fromString("bbcc4621-d18f-4a94-ae2f-b38072bf5087"), dateTimeBegin, dateTimeEnd, validGuest, validRoom, 100.0);
         validRent3 = new Rent(UUID.fromString("aacc4621-d18f-4a94-ae2f-b38072bf5087"), dateTimeBegin, dateTimeEnd, validGuest, validRoom2, 100.0);
+        validRent4 = new Rent(UUID.fromString("ddcc4621-d18f-4a94-ae2f-b38072bf5087"), dateTimeBegin, dateTimeEnd, validGuest2, validRoom3, 100.0);
         invalidRentNullBeginTime = new Rent(UUID.fromString("abcc4621-d88f-4a94-ae2f-b38072bf5087"), null, dateTimeEnd, validGuest, validRoom, 200.0);
         invalidRentNotUniqueUuid = new Rent(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087"), dateTimeBegin, dateTimeEnd, validGuest2, validRoom2, 200.0);
         invalidRentArchivedRoom = new Rent(UUID.fromString("bbcc5521-d88f-4a94-ae2f-b38072bf5087"), dateTimeBegin, dateTimeEnd, validGuest, archivedRoom, 200.0);
@@ -123,7 +127,7 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom));
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(archivedRoom));
 
-        roomRepository.setRoomArchivedStatus(roomRepository.findRoomByNumber("14"), true);
+        roomRepository.setRoomArchivedStatus("14", true);
 
 
         rentRepository.saveRent(RentMapper.mapRentFromDomainToDb(validRent), validRent.getRoom().getNumber(), validRent.getGuest().getPersonalId());
@@ -141,7 +145,7 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom));
         rentRepository.saveRent(RentMapper.mapRentFromDomainToDb(validRent), validRent.getRoom().getNumber(), validRent.getGuest().getPersonalId());
 
-        assertDoesNotThrow(() -> rentRepository.endRent(rentRepository.findRentByUuid(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087"))));
+        assertDoesNotThrow(() -> rentRepository.endRent(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087")));
         assertFalse(RoomMapper.mapRoomFromDbToDomain(roomRepository.findRoomByNumber("12")).isRented());
         assertFalse(RentMapper.mapRentFromDbToDomain(rentRepository.findRentByUuid(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087"))).isActive());
 
@@ -151,8 +155,6 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
     public void rentRoomRaceTest() {
         guestRepository.saveGuest(GuestMapper.mapGuestFromDomainToDb(validGuest));
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom));
-
-
 
         AtomicInteger successCount = new AtomicInteger(0);
         ConcurrentLinkedQueue<Exception> exceptions = new ConcurrentLinkedQueue<>();
@@ -201,9 +203,8 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
 
         Runnable raceTask = () -> {
             try {
-                RentEnt rentEnt = rentRepository.findRentByUuid(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087"));
                 barrier.await();
-                rentRepository.endRent(rentEnt);
+                rentRepository.endRent(UUID.fromString("bbcc4621-d88f-4a94-ae2f-b38072bf5087"));
                 successCount.incrementAndGet();
             } catch (Exception e) {
                 exceptions.add(e);
@@ -232,7 +233,7 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void findInvalidGuestByPersonalIdTest() {
+    public void findInvalidRentByUUIDTest() {
         guestRepository.saveGuest(GuestMapper.mapGuestFromDomainToDb(validGuest));
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom));
         rentRepository.saveRent(RentMapper.mapRentFromDomainToDb(validRent), validRent.getRoom().getNumber(), validRent.getGuest().getPersonalId());
@@ -241,7 +242,7 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void findAllGuestsTest() {
+    public void findAllRentsTest() {
         guestRepository.saveGuest(GuestMapper.mapGuestFromDomainToDb(validGuest));
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom));
         roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom2));
@@ -257,6 +258,37 @@ class JpaRentRepositoryTest extends AbstractDatabaseTest {
         assertEquals(2, allRents.size());
         assertTrue(allRents.contains(validRent));
         assertTrue(allRents.contains(validRent3));
+
+    }
+
+    @Test
+    public void findGuestRentsTest() {
+        guestRepository.saveGuest(GuestMapper.mapGuestFromDomainToDb(validGuest));
+        guestRepository.saveGuest(GuestMapper.mapGuestFromDomainToDb(validGuest2));
+        roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom));
+        roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom2));
+        roomRepository.saveRoom(RoomMapper.mapRoomFromDomainToDb(validRoom3));
+        rentRepository.saveRent(RentMapper.mapRentFromDomainToDb(validRent), validRent.getRoom().getNumber(), validRent.getGuest().getPersonalId());
+        rentRepository.saveRent(RentMapper.mapRentFromDomainToDb(validRent3), validRent3.getRoom().getNumber(), validRent3.getGuest().getPersonalId());
+        rentRepository.saveRent(RentMapper.mapRentFromDomainToDb(validRent4), validRent4.getRoom().getNumber(), validRent4.getGuest().getPersonalId());
+
+        List<Rent> guest1Rents = new ArrayList<>();
+        List<Rent> guest2Rents = new ArrayList<>();
+
+        for (RentEnt rentEnt : rentRepository.findGuestRents(validGuest.getPersonalId())) {
+            guest1Rents.add(RentMapper.mapRentFromDbToDomain(rentEnt));
+        }
+
+        for (RentEnt rentEnt : rentRepository.findGuestRents(validGuest2.getPersonalId())) {
+            guest2Rents.add(RentMapper.mapRentFromDbToDomain(rentEnt));
+        }
+
+        assertEquals(2, guest1Rents.size());
+        assertTrue(guest1Rents.contains(validRent));
+        assertTrue(guest1Rents.contains(validRent3));
+
+        assertEquals(1, guest2Rents.size());
+        assertTrue(guest2Rents.contains(validRent4));
 
     }
 }

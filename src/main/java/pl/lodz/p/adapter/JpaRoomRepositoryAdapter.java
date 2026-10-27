@@ -31,8 +31,7 @@ public class JpaRoomRepositoryAdapter implements JpaRoomRepositoryAdapterInterfa
 
     @Override
     public void setRoomArchivedStatus(String number, boolean isArchived) {
-        RoomEnt roomEnt = roomRepository.findRoomByNumber(number);
-        roomRepository.setRoomArchivedStatus(roomEnt, isArchived);
+        roomRepository.setRoomArchivedStatus(number, isArchived);
     }
 
     @Override

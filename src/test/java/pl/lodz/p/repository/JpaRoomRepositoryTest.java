@@ -75,7 +75,7 @@ class JpaRoomRepositoryTest extends AbstractDatabaseTest {
 
         assertFalse(foundRoom.isArchived());
 
-        assertDoesNotThrow(() -> roomRepository.setRoomArchivedStatus(roomRepository.findRoomByNumber("12"), true));
+        assertDoesNotThrow(() -> roomRepository.setRoomArchivedStatus("12", true));
 
         foundRoom = RoomMapper.mapRoomFromDbToDomain(roomRepository.findRoomByNumber("12"));
 
@@ -92,9 +92,8 @@ class JpaRoomRepositoryTest extends AbstractDatabaseTest {
 
         Runnable raceTask = () -> {
             try {
-                RoomEnt roomEnt = roomRepository.findRoomByNumber("12");
                 barrier.await();
-                roomRepository.setRoomArchivedStatus(roomEnt, true);
+                roomRepository.setRoomArchivedStatus("12", true);
                 successCount.incrementAndGet();
             } catch (Exception e) {
                 exceptions.add(e);
