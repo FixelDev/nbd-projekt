@@ -2,6 +2,7 @@ package pl.lodz.p.model.domain;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.UUID;
 
 public class Rent {
     private final LocalDateTime beginTime;
@@ -10,14 +11,26 @@ public class Rent {
     private final Room room;
     private double rentCost;
     private boolean active = true;
+    private UUID uuid;
 
     public Rent(LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room) {
         this.beginTime = beginTime;
         this.endTime = endTime;
         this.guest = guest;
         this.room = room;
+        this.uuid = UUID.randomUUID();
 
         calculateRentCost();
+    }
+
+    public Rent(UUID uuid, LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room, double rentCost) {
+        this.beginTime = beginTime;
+        this.endTime = endTime;
+        this.guest = guest;
+        this.room = room;
+        this.uuid = uuid;
+        this.rentCost = rentCost;
+
     }
 
     private void calculateRentCost() {
@@ -57,6 +70,10 @@ public class Rent {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     @Override

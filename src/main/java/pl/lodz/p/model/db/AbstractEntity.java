@@ -24,7 +24,4 @@ public class AbstractEntity {
         this.uuid = uuid;
     }
 
-    public void setVersion(long version) {
-        this.version = version;
-    }
 }

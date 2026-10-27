@@ -17,6 +17,13 @@ public class Room {
         this.uuid = UUID.randomUUID();
     }
 
+    public Room(UUID uuid, String number, int bedsAmount, double price) {
+        this.number = number;
+        this.bedsAmount = bedsAmount;
+        this.price = price;
+        this.uuid = uuid;
+    }
+
     public void setBasePrice(double price) {
         this.price = price;
     }
@@ -62,6 +69,7 @@ public class Room {
                 "number: '" + number + '\'' + '\n' +
                 "bedsAmount: " + bedsAmount + '\n' +
                 "price: " + price + '\n' +
-                "archived: " + archived + '\n';
+                "archived: " + archived + '\n' +
+                "rented: " + rented + '\n';
     }
 }

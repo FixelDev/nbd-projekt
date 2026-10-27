@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Table(name = "RENTS")
 @Entity
-public class RentEnt extends AbstractEntity {
+@Table(name = "RENTS")
+public class RentEnt {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -33,6 +34,18 @@ public class RentEnt extends AbstractEntity {
 
     @Column(name = "ACTIVE")
     private boolean active;
+
+    @NotNull
+    @Column(name = "ENTITY_UUID", unique = true, updatable = false)
+    private UUID uuid;
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
 
     public void setId(Long id) {
         this.id = id;

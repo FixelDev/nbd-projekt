@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 public class RoomEnt extends AbstractEntity{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @NotEmpty
@@ -22,9 +23,11 @@ public class RoomEnt extends AbstractEntity{
     @Column(name = "PRICE")
     private double price;
 
-    @NotEmpty
     @Column(name = "ARCHIVED")
     private boolean archived;
+
+    @Column(name = "RENTED")
+    private boolean rented;
 
     public Long getId() {
         return id;
@@ -64,5 +67,13 @@ public class RoomEnt extends AbstractEntity{
 
     public void setArchived(boolean archived) {
         this.archived = archived;
+    }
+
+    public boolean isRented() {
+        return rented;
+    }
+
+    public void setRented(boolean rented) {
+        this.rented = rented;
     }
 }
