@@ -1,4 +1,4 @@
-package pl.lodz.p.repository;
+package pl.lodz.p;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;

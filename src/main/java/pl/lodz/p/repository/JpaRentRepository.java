@@ -84,19 +84,23 @@ public class JpaRentRepository {
         }
     }
 
-    public void endRent(UUID uuid) {
+    public void endRent(RentEnt rentEnt) {
         try (EntityManager em = emf.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
 
             try {
                 transaction.begin();
+                RentEnt mergedRent = em.merge(rentEnt);
 
-                RentEnt foundRentEnt = findRentByUuid(uuid, em);
-                RoomEnt roomEnt = foundRentEnt.getRoom();
-                em.lock(foundRentEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-                em.lock(roomEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-                foundRentEnt.setActive(false);
+                mergedRent.setActive(false);
+
+                RoomEnt roomEnt = mergedRent.getRoom();
                 roomEnt.setRented(false);
+                em.merge(roomEnt);
+
+                em.lock(mergedRent, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+                em.lock(roomEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+
                 transaction.commit();
             } catch (EntityNotFoundException e) {
                 if (transaction.isActive()) {
@@ -110,9 +114,9 @@ public class JpaRentRepository {
                 }
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
-                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację rezerwacji o UUID = " + uuid + ", " + e.getMessage());
+                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację rezerwacji o UUID = " + rentEnt.getUuid() + ", " + e.getMessage());
                 } else {
-                    throw new RepositoryException("Wystąpił błąd przy zakończeniu rezerwacji o UUID = " + uuid + ", " + e.getMessage());
+                    throw new RepositoryException("Wystąpił błąd przy zakończeniu rezerwacji o UUID = " + rentEnt.getUuid() + ", " + e.getMessage());
                 }
 
             }

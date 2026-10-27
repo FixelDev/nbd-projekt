@@ -2,6 +2,7 @@ package pl.lodz.p.model.domain;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Rent {
@@ -85,5 +86,24 @@ public class Rent {
                 "room: " + room + '\n' +
                 "rentCost: " + rentCost + '\n' +
                 "isActive: " + active + '\n';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Rent rent = (Rent) o;
+        return Double.compare(rent.rentCost, rentCost) == 0 &&
+                active == rent.active &&
+                Objects.equals(beginTime, rent.beginTime) &&
+                Objects.equals(endTime, rent.endTime) &&
+                Objects.equals(guest, rent.guest) &&
+                Objects.equals(room, rent.room) &&
+                Objects.equals(uuid, rent.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(beginTime, endTime, guest, room, rentCost, active, uuid);
     }
 }

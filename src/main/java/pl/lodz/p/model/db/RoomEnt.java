@@ -15,11 +15,9 @@ public class RoomEnt extends AbstractEntity{
     @Column(name = "NUMBER", unique = true)
     private String number;
 
-    @NotEmpty
     @Column(name = "BEDS")
     private int bedsAmount;
 
-    @NotEmpty
     @Column(name = "PRICE")
     private double price;
 

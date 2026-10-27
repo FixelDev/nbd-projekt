@@ -24,7 +24,8 @@ public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInter
 
     @Override
     public void setGuestArchivedStatus(String personalId, boolean isArchived) {
-        guestRepository.setGuestArchivedStatus(personalId, isArchived);
+        GuestEnt guestEnt = guestRepository.findGuestByPersonalId(personalId);
+        guestRepository.setGuestArchivedStatus(guestEnt, isArchived);
     }
 
     @Override

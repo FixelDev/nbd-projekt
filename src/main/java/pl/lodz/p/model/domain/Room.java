@@ -1,5 +1,6 @@
 package pl.lodz.p.model.domain;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Room {
@@ -71,5 +72,22 @@ public class Room {
                 "price: " + price + '\n' +
                 "archived: " + archived + '\n' +
                 "rented: " + rented + '\n';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
+        return bedsAmount == room.bedsAmount &&
+                Double.compare(room.price, price) == 0 &&
+                archived == room.archived &&
+                Objects.equals(number, room.number) &&
+                Objects.equals(uuid, room.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(number, bedsAmount, price, archived, rented, uuid);
     }
 }

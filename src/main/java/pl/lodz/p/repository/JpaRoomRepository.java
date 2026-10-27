@@ -3,7 +3,9 @@ package pl.lodz.p.repository;
 import jakarta.persistence.*;
 import pl.lodz.p.exception.ConcurrentOperationException;
 import pl.lodz.p.exception.RepositoryException;
+import pl.lodz.p.model.db.GuestEnt;
 import pl.lodz.p.model.db.RoomEnt;
+import pl.lodz.p.exception.EntityNotFoundException;
 
 import java.util.List;
 
@@ -35,33 +37,27 @@ public class JpaRoomRepository {
         }
     }
 
-    public void setRoomArchivedStatus(String number, boolean isArchived) {
+    public void setRoomArchivedStatus(RoomEnt roomEnt, boolean isArchived) {
         try (EntityManager em = emf.createEntityManager()) {
             EntityTransaction transaction = em.getTransaction();
 
             try {
                 transaction.begin();
 
-                RoomEnt foundRoomEnt = findRoomByNumber(number, em);
-                em.lock(foundRoomEnt, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-                foundRoomEnt.setArchived(isArchived);
+                roomEnt.setArchived(isArchived);
+                RoomEnt mergedRoom = em.merge(roomEnt);
+                em.lock(mergedRoom, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 
                 transaction.commit();
-            } catch (EntityNotFoundException e) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                }
-
-                throw e;
             } catch (Exception e) {
                 if (transaction.isActive()) {
                     transaction.rollback();
                 }
 
                 if (e instanceof OptimisticLockException || e.getCause() instanceof OptimisticLockException) {
-                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację pokoju o numerze = " + number + ", " + e.getMessage());
+                    throw new ConcurrentOperationException("Wykryto współbieżną modyfikację pokoju o numerze = " + roomEnt.getNumber() + ", " + e.getMessage());
                 } else {
-                    throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji pokoju o numerze = " + number + ", " + e.getMessage());
+                    throw new RepositoryException("Wystąpił błąd przy zmianie statusu archiwizacji pokoju o numerze = " + roomEnt.getNumber() + ", " + e.getMessage());
                 }
 
             }

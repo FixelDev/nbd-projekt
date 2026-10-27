@@ -25,7 +25,8 @@ public class JpaRentRepositoryAdapter implements JpaRentRepositoryAdapterInterfa
 
     @Override
     public void endRent(UUID uuid) {
-        rentRepository.endRent(uuid);
+        RentEnt rentEnt = rentRepository.findRentByUuid(uuid);
+        rentRepository.endRent(rentEnt);
     }
 
     @Override
