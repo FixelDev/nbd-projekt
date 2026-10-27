@@ -9,6 +9,6 @@ import java.util.UUID;
 public interface JpaRentRepositoryAdapterInterface {
     Rent saveRent(Rent rent);
     void endRent(UUID uuid);
-    Guest findRentByUuid(UUID uuid);
+    Rent findRentByUuid(UUID uuid);
     List<Rent> findAllRents();
 }

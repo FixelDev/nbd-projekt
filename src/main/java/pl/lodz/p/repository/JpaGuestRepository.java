@@ -69,7 +69,7 @@ public class JpaGuestRepository {
     }
 
     private GuestEnt findGuestByPersonalId(String personalId, EntityManager em) {
-        return em.createQuery("SELECT g FROM GuestEnt g WHERE g.personalId = :personalId", GuestEnt.class)
+        return em.createQuery("SELECT g FROM Guest g WHERE g.personalId = :personalId", GuestEnt.class)
                 .setParameter("personalId", personalId)
                 .getResultStream()
                 .findFirst()
@@ -84,7 +84,7 @@ public class JpaGuestRepository {
 
     public List<GuestEnt> findAllGuests() {
         try (EntityManager em = emf.createEntityManager()) {
-            return em.createQuery("SELECT g FROM GuestEnt g", GuestEnt.class)
+            return em.createQuery("SELECT g FROM Guest g", GuestEnt.class)
                     .getResultList();
         }
     }

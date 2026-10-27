@@ -75,6 +75,8 @@ public class Main {
             } catch (Exception e) {
                 exceptionCount.incrementAndGet();
                 System.err.println("Wątek 1: BŁĄD - " + e.getMessage());
+                e.printStackTrace();
+
 
                 if (e instanceof PessimisticLockException | e.getCause() instanceof PessimisticLockException) {
                     System.err.println("PESYMISTYCZNY");
@@ -96,6 +98,7 @@ public class Main {
             } catch (Exception e) {
                 exceptionCount.incrementAndGet();
                 System.err.println("Wątek 2: BŁĄD - " + e.getMessage());
+                e.printStackTrace();
 
                 if (e instanceof PessimisticLockException | e.getCause() instanceof PessimisticLockException) {
                     System.err.println("PESYMISTYCZNY");
@@ -121,6 +124,33 @@ public class Main {
 
         System.out.println("Udane rezerwacje: " + successCount.get()); // Powinno wynosić 1
         System.out.println("Odrzucone rezerwacje: " + exceptionCount.get());
+
+        try {
+            Rent rent = adapterRent.findRentByUuid(UUID.fromString("93d816ea-c30b-492c-8351-3b094d592dee"));
+            IO.println(rent);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            List<Rent> rents = adapterRent.findAllRents();
+
+            for (Rent rent : rents) {
+                IO.println(rent);
+            }
+
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        try {
+            adapterRent.endRent(UUID.fromString("9a2317b6-9e5f-404a-b4d8-0e648c016831"));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+
+
 
 //        try {
 //            adapterRoom.saveRoom(room);

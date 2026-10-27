@@ -1,15 +1,17 @@
 package pl.lodz.p.adapter;
 
+import pl.lodz.p.adapter.mapper.GuestMapper;
 import pl.lodz.p.adapter.mapper.RentMapper;
 import pl.lodz.p.model.db.*;
 import pl.lodz.p.model.domain.*;
 import pl.lodz.p.repository.JpaRentRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class JpaRentRepositoryAdapter implements JpaRentRepositoryAdapterInterface{
-    private JpaRentRepository rentRepository;
+    private final JpaRentRepository rentRepository;
 
     public JpaRentRepositoryAdapter(JpaRentRepository rentRepository) {
         this.rentRepository = rentRepository;
@@ -23,17 +25,23 @@ public class JpaRentRepositoryAdapter implements JpaRentRepositoryAdapterInterfa
 
     @Override
     public void endRent(UUID uuid) {
-
+        rentRepository.endRent(uuid);
     }
 
     @Override
-    public Guest findRentByUuid(UUID uuid) {
-        return null;
+    public Rent findRentByUuid(UUID uuid) {
+        return RentMapper.mapRentFromDbToDomain(rentRepository.findRentByUuid(uuid));
     }
 
     @Override
     public List<Rent> findAllRents() {
-        return List.of();
+        List<Rent> allRents = new ArrayList<>();
+
+        for (RentEnt rentEnt : rentRepository.findAllRents()) {
+            allRents.add(RentMapper.mapRentFromDbToDomain(rentEnt));
+        }
+
+        return allRents;
     }
 
 }

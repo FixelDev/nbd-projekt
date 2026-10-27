@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JpaGuestRepositoryAdapter implements JpaGuestRepositoryAdapterInterface {
-    private JpaGuestRepository guestRepository;
+    private final JpaGuestRepository guestRepository;
 
     public JpaGuestRepositoryAdapter(JpaGuestRepository guestRepository) {
         this.guestRepository = guestRepository;

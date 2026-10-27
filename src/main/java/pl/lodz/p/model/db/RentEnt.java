@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "RENTS")
-public class RentEnt {
+public class RentEnt extends AbstractEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -34,18 +34,6 @@ public class RentEnt {
 
     @Column(name = "ACTIVE")
     private boolean active;
-
-    @NotNull
-    @Column(name = "ENTITY_UUID", unique = true, updatable = false)
-    private UUID uuid;
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }
 
     public void setId(Long id) {
         this.id = id;
