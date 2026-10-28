@@ -79,7 +79,7 @@ public class Rent {
 
     @Override
     public String toString() {
-        return "Rent: " +
+        return "Rent: " + "UUID: " + uuid + '\n' +
                 "beginTime: " + beginTime + '\n' +
                 "endTime: " + endTime + '\n' +
                 "guest: " + guest + '\n' +

@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManagerFactory;
 import pl.lodz.p.adapter.JpaGuestRepositoryAdapter;
 import pl.lodz.p.adapter.JpaRentRepositoryAdapter;
 import pl.lodz.p.adapter.mapper.RentMapper;
+import pl.lodz.p.exception.BusinessLogicException;
 import pl.lodz.p.exception.InvalidValueException;
 import pl.lodz.p.model.db.RentEnt;
 import pl.lodz.p.model.domain.Guest;
@@ -28,6 +29,14 @@ public class RentManager {
     public Rent rentRoom(LocalDateTime beginTime, LocalDateTime endTime, Guest guest, Room room) {
         if (endTime.isBefore(beginTime)) {
             throw new InvalidValueException("Data zakończenia: " + endTime + " nie może być wcześniej niż data rozpoczęcia: " + beginTime);
+        }
+
+        if (guest.isArchived()) {
+            throw new BusinessLogicException("Gość o personalId = " + guest.getPersonalId() + " jest zarchiwizowany");
+        }
+
+        if (room.isRented() || room.isArchived()) {
+            throw new BusinessLogicException("Pokój o numerze = " + room.getNumber() + " jest już wypożyczony lub zarchiwizowany");
         }
 
         Rent rent = new Rent(beginTime, endTime, guest, room);

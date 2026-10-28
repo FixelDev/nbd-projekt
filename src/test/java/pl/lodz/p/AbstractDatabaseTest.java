@@ -10,14 +10,16 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Map;
 
-@Testcontainers
 public abstract class AbstractDatabaseTest {
 
-    @Container
     protected static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
             .withDatabaseName("test_db")
             .withUsername("test_user")
             .withPassword("test_pass");
+
+    static {
+        postgres.start();
+    }
 
     protected static EntityManagerFactory emf;
 
